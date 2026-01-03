@@ -49,3 +49,36 @@ export const tables = mysqlTable("tables", {
 
 export type Table = typeof tables.$inferSelect;
 export type InsertTable = typeof tables.$inferInsert;
+
+/**
+ * 预约管理表
+ * 用于存储餐厅的预约信息
+ */
+export const reservations = mysqlTable("reservations", {
+  id: int("id").autoincrement().primaryKey(),
+  /** 关联的桌位ID */
+  tableId: int("tableId").notNull(),
+  /** 客户姓名 */
+  customerName: varchar("customerName", { length: 100 }).notNull(),
+  /** 客户电话 */
+  customerPhone: varchar("customerPhone", { length: 50 }).notNull(),
+  /** 客户邮箱 */
+  customerEmail: varchar("customerEmail", { length: 100 }),
+  /** 预约人数 */
+  partySize: int("partySize").notNull(),
+  /** 预约日期时间 */
+  reservationTime: timestamp("reservationTime").notNull(),
+  /** 预约时长（分钟） */
+  duration: int("duration").default(120).notNull(),
+  /** 预约状态: pending(待确认), confirmed(已确认), cancelled(已取消), completed(已完成), no_show(未到店) */
+  status: varchar("status", { length: 20 }).default("pending").notNull(),
+  /** 特殊要求/备注 */
+  notes: text("notes"),
+  /** 创建人ID */
+  createdBy: int("createdBy"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Reservation = typeof reservations.$inferSelect;
+export type InsertReservation = typeof reservations.$inferInsert;

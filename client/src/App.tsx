@@ -5,20 +5,15 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Layout from "./components/Layout";
-import Home from "./pages/Home";
-import Features from "./pages/Features";
-import Roadmap from "./pages/Roadmap";
-import Status from "./pages/Status";
+
 import Tables from "./pages/Tables";
+import Reservations from "./pages/Reservations";
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
     <Layout>
       <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/features" component={Features} />
-        <Route path="/roadmap" component={Roadmap} />
-        <Route path="/status" component={Status} />
+        <Route path="/" component={Reservations} />
         <Route path="/tables" component={Tables} />
         <Route component={NotFound} />
       </Switch>

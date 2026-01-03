@@ -18,18 +18,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { href: "/", label: "仪表板", icon: LayoutDashboard },
+    { href: "/", label: "预约管理", icon: CalendarDays },
     { href: "/tables", label: "桌位管理", icon: Utensils },
-    { href: "/features", label: "功能清单", icon: ListTodo },
-    { href: "/roadmap", label: "开发路线", icon: CalendarDays },
-    { href: "/status", label: "系统状态", icon: Activity },
   ];
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-background font-mono">
       {/* Mobile Header */}
       <div className="md:hidden flex items-center justify-between p-4 border-b-2 border-border bg-card z-50 sticky top-0">
-        <div className="font-black text-xl tracking-tighter">项目追踪系统</div>
+        <div className="font-black text-xl tracking-tighter">餐厅预约系统</div>
         <Button 
           variant="ghost" 
           size="icon" 
@@ -46,7 +43,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="p-6 border-b-2 border-border hidden md:block">
-          <div className="font-black text-2xl tracking-tighter">项目追踪系统</div>
+          <div className="font-black text-2xl tracking-tighter">餐厅预约系统</div>
           <div className="text-xs text-muted-foreground mt-1">系统版本_V.1.0.0</div>
         </div>
 
