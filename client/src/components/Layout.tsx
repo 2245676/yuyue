@@ -7,7 +7,8 @@ import {
   Activity, 
   Settings,
   Menu,
-  X
+  X,
+  Utensils
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   const navItems = [
     { href: "/", label: "仪表板", icon: LayoutDashboard },
+    { href: "/tables", label: "桌位管理", icon: Utensils },
     { href: "/features", label: "功能清单", icon: ListTodo },
     { href: "/roadmap", label: "开发路线", icon: CalendarDays },
     { href: "/status", label: "系统状态", icon: Activity },

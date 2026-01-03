@@ -9,8 +9,9 @@ import Home from "./pages/Home";
 import Features from "./pages/Features";
 import Roadmap from "./pages/Roadmap";
 import Status from "./pages/Status";
-
+import Tables from "./pages/Tables";
 function Router() {
+  // make sure to consider if you need authentication for certain routes
   return (
     <Layout>
       <Switch>
@@ -18,6 +19,7 @@ function Router() {
         <Route path="/features" component={Features} />
         <Route path="/roadmap" component={Roadmap} />
         <Route path="/status" component={Status} />
+        <Route path="/tables" component={Tables} />
         <Route component={NotFound} />
       </Switch>
     </Layout>

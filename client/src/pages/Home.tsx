@@ -1,3 +1,5 @@
+import { useAuth } from "@/_core/hooks/useAuth";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
@@ -9,11 +11,14 @@ import {
   ArrowRight,
   Database,
   Server,
-  Layout
+  Layout,
+  Activity
 } from "lucide-react";
 import { Link } from "wouter";
 
 export default function Home() {
+  const { user, loading, error, isAuthenticated, logout } = useAuth();
+
   // Mock data based on system_status_and_plan.md
   const overallProgress = 11;
   
@@ -52,7 +57,7 @@ export default function Home() {
         <Card className="neo-box rounded-none">
           <CardHeader className="border-b-2 border-border pb-2">
             <CardTitle className="font-black text-lg flex items-center gap-2">
-              <ActivityIcon /> 总体进度
+              <Activity className="w-5 h-5" /> 总体进度
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-6">
@@ -65,7 +70,7 @@ export default function Home() {
         <Card className="neo-box rounded-none md:col-span-2">
           <CardHeader className="border-b-2 border-border pb-2">
             <CardTitle className="font-black text-lg flex items-center gap-2">
-              <ListIcon /> 模块状态
+              <Layout className="w-5 h-5" /> 模块状态
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-6 grid grid-cols-3 gap-4">
@@ -86,7 +91,7 @@ export default function Home() {
         <Card className="neo-box rounded-none">
           <CardHeader className="border-b-2 border-border pb-2 bg-muted/20">
             <CardTitle className="font-black text-lg flex items-center gap-2">
-              <ServerIcon /> 系统健康
+              <Server className="w-5 h-5" /> 系统健康
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-4 space-y-4">
@@ -100,7 +105,7 @@ export default function Home() {
         <Card className="neo-box rounded-none">
           <CardHeader className="border-b-2 border-border pb-2 bg-muted/20">
             <CardTitle className="font-black text-lg flex items-center gap-2">
-              <HistoryIcon /> 最近活动
+              <Clock className="w-5 h-5" /> 最近活动
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
@@ -157,9 +162,3 @@ function StatusIcon({ status }: { status: string }) {
   if (status === "pending") return <Clock className="w-5 h-5 text-blue-600" />;
   return <AlertCircle className="w-5 h-5 text-red-600" />;
 }
-
-function ActivityIcon() { return <Activity className="w-5 h-5" />; }
-function ListIcon() { return <Layout className="w-5 h-5" />; }
-function ServerIcon() { return <Server className="w-5 h-5" />; }
-function HistoryIcon() { return <Clock className="w-5 h-5" />; }
-import { Activity } from "lucide-react";
