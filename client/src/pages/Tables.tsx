@@ -23,11 +23,11 @@ export default function Tables() {
   const [editingTable, setEditingTable] = useState<any>(null);
 
   const utils = trpc.useUtils();
-  const { data: tables, isLoading } = trpc.table.list.useQuery();
+  const { data: tables, isLoading } = trpc.table.listActive.useQuery();
 
   const createMutation = trpc.table.create.useMutation({
     onSuccess: () => {
-      utils.table.list.invalidate();
+      utils.table.listActive.invalidate();
       setIsCreateDialogOpen(false);
       toast.success("桌位创建成功");
     },
@@ -38,7 +38,7 @@ export default function Tables() {
 
   const updateMutation = trpc.table.update.useMutation({
     onSuccess: () => {
-      utils.table.list.invalidate();
+      utils.table.listActive.invalidate();
       setIsEditDialogOpen(false);
       setEditingTable(null);
       toast.success("桌位更新成功");
@@ -50,7 +50,7 @@ export default function Tables() {
 
   const deleteMutation = trpc.table.delete.useMutation({
     onSuccess: () => {
-      utils.table.list.invalidate();
+      utils.table.listActive.invalidate();
       toast.success("桌位已删除");
     },
     onError: (error) => {
