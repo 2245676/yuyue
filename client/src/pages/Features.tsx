@@ -5,48 +5,48 @@ import { CheckSquare, Square, Clock, AlertTriangle } from "lucide-react";
 export default function Features() {
   const features = [
     {
-      category: "Infrastructure & Deployment",
+      category: "基础设施与部署",
       status: "completed",
       items: [
-        { name: "Server Deployment (Ubuntu + BT-Panel)", status: "done" },
-        { name: "Apache Reverse Proxy", status: "done" },
-        { name: "SSL Configuration", status: "done" },
-        { name: "Node.js Backend (PM2)", status: "done" },
-        { name: "Frontend Static Deployment", status: "done" }
+        { name: "服务器部署 (Ubuntu + 宝塔面板)", status: "done" },
+        { name: "Apache 反向代理", status: "done" },
+        { name: "SSL 证书配置", status: "done" },
+        { name: "Node.js 后端 (PM2)", status: "done" },
+        { name: "前端静态部署", status: "done" }
       ]
     },
     {
-      category: "Authentication System",
+      category: "身份验证系统",
       status: "completed",
       items: [
-        { name: "Login Page Design", status: "done" },
-        { name: "Backend Login API", status: "done" },
-        { name: "JWT Token Generation", status: "done" },
-        { name: "Token Storage & Validation", status: "done" },
-        { name: "Redirect Logic Fix", status: "done" },
-        { name: "Logout Functionality", status: "done" }
+        { name: "登录页面设计", status: "done" },
+        { name: "后端登录 API", status: "done" },
+        { name: "JWT 令牌生成", status: "done" },
+        { name: "令牌存储与验证", status: "done" },
+        { name: "跳转逻辑修复", status: "done" },
+        { name: "退出登录功能", status: "done" }
       ]
     },
     {
-      category: "Reservation Management",
+      category: "预约管理",
       status: "pending",
       items: [
-        { name: "Reservation List (Timeline View)", status: "todo" },
-        { name: "Reservation List (Mobile View)", status: "todo" },
-        { name: "Create Reservation", status: "todo" },
-        { name: "Edit/Delete Reservation", status: "todo" },
-        { name: "Conflict Detection Algorithm", status: "todo" },
-        { name: "Search & Filter", status: "todo" }
+        { name: "预约列表 (时间线视图)", status: "todo" },
+        { name: "预约列表 (移动端视图)", status: "todo" },
+        { name: "创建预约", status: "todo" },
+        { name: "编辑/删除预约", status: "todo" },
+        { name: "冲突检测算法", status: "todo" },
+        { name: "搜索与筛选", status: "todo" }
       ]
     },
     {
-      category: "Table Management",
+      category: "桌位管理",
       status: "pending",
       items: [
-        { name: "Table List View", status: "todo" },
-        { name: "Create/Edit Tables", status: "todo" },
-        { name: "Table Capacity Settings", status: "todo" },
-        { name: "Availability Status", status: "todo" }
+        { name: "桌位列表视图", status: "todo" },
+        { name: "创建/编辑桌位", status: "todo" },
+        { name: "桌位容量设置", status: "todo" },
+        { name: "可用性状态", status: "todo" }
       ]
     }
   ];
@@ -54,8 +54,8 @@ export default function Features() {
   return (
     <div className="space-y-8">
       <div className="border-b-2 border-border pb-6">
-        <h1 className="text-4xl font-black tracking-tighter uppercase">Feature Matrix</h1>
-        <p className="text-muted-foreground font-mono mt-2">TRACKING_MODULES // V.1.0</p>
+        <h1 className="text-4xl font-black tracking-tighter uppercase">功能矩阵</h1>
+        <p className="text-muted-foreground font-mono mt-2">追踪模块 // V.1.0</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -90,12 +90,12 @@ export default function Features() {
 
 function StatusBadge({ status }: { status: string }) {
   if (status === "completed") {
-    return <Badge className="bg-green-600 text-white hover:bg-green-700 border-2 border-black rounded-none">COMPLETED</Badge>;
+    return <Badge className="bg-green-600 text-white hover:bg-green-700 border-2 border-black rounded-none">已完成</Badge>;
   }
   if (status === "pending") {
-    return <Badge className="bg-yellow-400 text-black hover:bg-yellow-500 border-2 border-black rounded-none">PENDING</Badge>;
+    return <Badge className="bg-yellow-400 text-black hover:bg-yellow-500 border-2 border-black rounded-none">待处理</Badge>;
   }
-  return <Badge variant="outline" className="rounded-none border-2 border-black">UNKNOWN</Badge>;
+  return <Badge variant="outline" className="rounded-none border-2 border-black">未知</Badge>;
 }
 
 function ItemIcon({ status }: { status: string }) {

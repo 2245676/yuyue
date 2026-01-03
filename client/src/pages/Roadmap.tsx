@@ -6,34 +6,34 @@ export default function Roadmap() {
   const phases = [
     {
       id: "PHASE_01",
-      title: "Core Reservation Management",
-      duration: "Weeks 1-3",
+      title: "核心预约管理",
+      duration: "第 1-3 周",
       status: "active",
       tasks: [
-        { week: "Week 1", items: ["Reservation CRUD API", "Conflict Detection", "Timeline UI"] },
-        { week: "Week 2", items: ["Table Management API", "Customer Management API", "Availability Logic"] },
-        { week: "Week 3", items: ["Search & Filter", "Status Management", "UI/UX Optimization"] }
+        { week: "第 1 周", items: ["预约增删改查 API", "冲突检测", "时间线界面"] },
+        { week: "第 2 周", items: ["桌位管理 API", "客户管理 API", "可用性逻辑"] },
+        { week: "第 3 周", items: ["搜索与筛选", "状态管理", "UI/UX 优化"] }
       ]
     },
     {
       id: "PHASE_02",
-      title: "Shop & Staff Management",
-      duration: "Weeks 4-5",
+      title: "店铺与员工管理",
+      duration: "第 4-5 周",
       status: "upcoming",
       tasks: [
-        { week: "Week 4", items: ["Shop Settings API", "Staff Roles & Permissions", "Auth Integration"] },
-        { week: "Week 5", items: ["Staff Scheduling", "Performance Metrics", "Admin Dashboard"] }
+        { week: "第 4 周", items: ["店铺设置 API", "员工角色与权限", "认证集成"] },
+        { week: "第 5 周", items: ["员工排班", "绩效指标", "管理仪表板"] }
       ]
     },
     {
       id: "PHASE_03",
-      title: "Advanced Features",
-      duration: "Weeks 6-8",
+      title: "高级功能",
+      duration: "第 6-8 周",
       status: "upcoming",
       tasks: [
-        { week: "Week 6", items: ["Reporting System", "Notification Engine", "Email/SMS Integration"] },
-        { week: "Week 7", items: ["Feedback System", "Blacklist Management", "Mobile Optimization"] },
-        { week: "Week 8", items: ["Final Testing", "Deployment", "Handover"] }
+        { week: "第 6 周", items: ["报表系统", "通知引擎", "邮件/短信集成"] },
+        { week: "第 7 周", items: ["反馈系统", "黑名单管理", "移动端优化"] },
+        { week: "第 8 周", items: ["最终测试", "部署上线", "项目移交"] }
       ]
     }
   ];
@@ -41,8 +41,8 @@ export default function Roadmap() {
   return (
     <div className="space-y-8">
       <div className="border-b-2 border-border pb-6">
-        <h1 className="text-4xl font-black tracking-tighter uppercase">Development Roadmap</h1>
-        <p className="text-muted-foreground font-mono mt-2">TIMELINE // MILESTONES</p>
+        <h1 className="text-4xl font-black tracking-tighter uppercase">开发路线图</h1>
+        <p className="text-muted-foreground font-mono mt-2">时间轴 // 里程碑</p>
       </div>
 
       <div className="relative border-l-4 border-border ml-4 md:ml-8 space-y-12 py-4">
@@ -100,7 +100,7 @@ export default function Roadmap() {
 
 function StatusBadge({ status }: { status: string }) {
   if (status === "active") {
-    return <Badge className="bg-blue-600 text-white hover:bg-blue-700 border-2 border-black rounded-none animate-pulse">IN PROGRESS</Badge>;
+    return <Badge className="bg-blue-600 text-white hover:bg-blue-700 border-2 border-black rounded-none animate-pulse">进行中</Badge>;
   }
-  return <Badge variant="outline" className="bg-muted text-muted-foreground border-2 border-muted-foreground rounded-none">UPCOMING</Badge>;
+  return <Badge variant="outline" className="bg-muted text-muted-foreground border-2 border-muted-foreground rounded-none">即将开始</Badge>;
 }

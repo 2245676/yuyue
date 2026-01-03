@@ -6,31 +6,31 @@ import { Activity, Server, Database, Shield, Globe } from "lucide-react";
 export default function Status() {
   // Mock data for charts
   const progressData = [
-    { name: 'Auth', completed: 100, remaining: 0 },
-    { name: 'Dashboard', completed: 50, remaining: 50 },
-    { name: 'Reservation', completed: 0, remaining: 100 },
-    { name: 'Tables', completed: 0, remaining: 100 },
-    { name: 'Customers', completed: 0, remaining: 100 },
+    { name: '认证', completed: 100, remaining: 0 },
+    { name: '仪表板', completed: 50, remaining: 50 },
+    { name: '预约', completed: 0, remaining: 100 },
+    { name: '桌位', completed: 0, remaining: 100 },
+    { name: '客户', completed: 0, remaining: 100 },
   ];
 
   const priorityData = [
-    { name: 'High Priority', value: 4, color: '#FF3333' },
-    { name: 'Medium Priority', value: 4, color: '#FFE600' },
-    { name: 'Low Priority', value: 4, color: '#00CC00' },
+    { name: '高优先级', value: 4, color: '#FF3333' },
+    { name: '中优先级', value: 4, color: '#FFE600' },
+    { name: '低优先级', value: 4, color: '#00CC00' },
   ];
 
   const services = [
-    { name: "Frontend Server", status: "online", uptime: "99.9%", latency: "45ms", icon: Globe },
-    { name: "Backend API", status: "online", uptime: "99.8%", latency: "120ms", icon: Server },
-    { name: "Database (PostgreSQL)", status: "online", uptime: "100%", latency: "15ms", icon: Database },
-    { name: "Auth Service", status: "online", uptime: "99.9%", latency: "50ms", icon: Shield },
+    { name: "前端服务器", status: "online", uptime: "99.9%", latency: "45ms", icon: Globe },
+    { name: "后端 API", status: "online", uptime: "99.8%", latency: "120ms", icon: Server },
+    { name: "数据库 (PostgreSQL)", status: "online", uptime: "100%", latency: "15ms", icon: Database },
+    { name: "认证服务", status: "online", uptime: "99.9%", latency: "50ms", icon: Shield },
   ];
 
   return (
     <div className="space-y-8">
       <div className="border-b-2 border-border pb-6">
-        <h1 className="text-4xl font-black tracking-tighter uppercase">System Status</h1>
-        <p className="text-muted-foreground font-mono mt-2">REALTIME_MONITORING // ANALYTICS</p>
+        <h1 className="text-4xl font-black tracking-tighter uppercase">系统状态</h1>
+        <p className="text-muted-foreground font-mono mt-2">实时监控 // 数据分析</p>
       </div>
 
       {/* Service Status Grid */}
@@ -44,13 +44,13 @@ export default function Status() {
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-green-500 border border-black animate-pulse" />
-                  <span className="font-mono text-xs font-bold uppercase text-green-600">ONLINE</span>
+                  <span className="font-mono text-xs font-bold uppercase text-green-600">在线</span>
                 </div>
               </div>
               <div className="font-black text-sm mb-1">{service.name}</div>
               <div className="flex justify-between text-xs font-mono text-muted-foreground mt-4 pt-4 border-t-2 border-border border-dashed">
-                <span>UP: {service.uptime}</span>
-                <span>LAT: {service.latency}</span>
+                <span>运行: {service.uptime}</span>
+                <span>延迟: {service.latency}</span>
               </div>
             </CardContent>
           </Card>
@@ -62,7 +62,7 @@ export default function Status() {
         <Card className="neo-box rounded-none">
           <CardHeader className="border-b-2 border-border pb-2">
             <CardTitle className="font-black text-lg flex items-center gap-2">
-              <Activity className="w-5 h-5" /> MODULE_COMPLETION
+              <Activity className="w-5 h-5" /> 模块完成度
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-6 h-[300px]">
@@ -85,7 +85,7 @@ export default function Status() {
         <Card className="neo-box rounded-none">
           <CardHeader className="border-b-2 border-border pb-2">
             <CardTitle className="font-black text-lg flex items-center gap-2">
-              <Shield className="w-5 h-5" /> TASK_DISTRIBUTION
+              <Shield className="w-5 h-5" /> 任务分布
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-6 h-[300px] flex items-center justify-center">

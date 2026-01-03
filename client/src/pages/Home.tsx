@@ -18,15 +18,15 @@ export default function Home() {
   const overallProgress = 11;
   
   const stats = [
-    { label: "COMPLETED", value: "5", total: "12", color: "text-green-600" },
-    { label: "IN_PROGRESS", value: "2", total: "12", color: "text-blue-600" },
-    { label: "PENDING", value: "5", total: "12", color: "text-gray-400" },
+    { label: "已完成", value: "5", total: "12", color: "text-green-600" },
+    { label: "进行中", value: "2", total: "12", color: "text-blue-600" },
+    { label: "待处理", value: "5", total: "12", color: "text-gray-400" },
   ];
 
   const recentActivity = [
-    { action: "DEPLOYED", target: "Authentication System", time: "2h ago", status: "success" },
-    { action: "FIXED", target: "Login Redirect Issue", time: "3h ago", status: "success" },
-    { action: "STARTED", target: "Reservation API", time: "Just now", status: "pending" },
+    { action: "已部署", target: "身份验证系统", time: "2小时前", status: "success" },
+    { action: "已修复", target: "登录跳转问题", time: "3小时前", status: "success" },
+    { action: "已开始", target: "预约管理 API", time: "刚刚", status: "pending" },
   ];
 
   return (
@@ -34,15 +34,15 @@ export default function Home() {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b-2 border-border pb-6">
         <div>
-          <h1 className="text-4xl font-black tracking-tighter uppercase">System Overview</h1>
-          <p className="text-muted-foreground font-mono mt-2">RESTAURANT_BOOKING_SYSTEM // DASHBOARD</p>
+          <h1 className="text-4xl font-black tracking-tighter uppercase">系统概览</h1>
+          <p className="text-muted-foreground font-mono mt-2">餐厅预约管理系统 // 仪表板</p>
         </div>
         <div className="flex gap-2">
           <Badge variant="outline" className="bg-green-100 text-green-800 border-2 border-green-800 font-bold px-3 py-1 rounded-none">
-            SYSTEM_ONLINE
+            系统在线
           </Badge>
           <Badge variant="outline" className="bg-accent text-accent-foreground border-2 border-border font-bold px-3 py-1 rounded-none">
-            DEV_MODE
+            开发模式
           </Badge>
         </div>
       </div>
@@ -52,20 +52,20 @@ export default function Home() {
         <Card className="neo-box rounded-none">
           <CardHeader className="border-b-2 border-border pb-2">
             <CardTitle className="font-black text-lg flex items-center gap-2">
-              <ActivityIcon /> OVERALL_PROGRESS
+              <ActivityIcon /> 总体进度
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-6">
             <div className="text-5xl font-black mb-4">{overallProgress}%</div>
             <Progress value={overallProgress} className="h-4 border-2 border-border rounded-none bg-muted [&>div]:bg-primary" />
-            <p className="text-xs font-mono mt-2 text-muted-foreground">TARGET: MVP LAUNCH (6-8 WEEKS)</p>
+            <p className="text-xs font-mono mt-2 text-muted-foreground">目标：MVP 发布（6-8 周）</p>
           </CardContent>
         </Card>
 
         <Card className="neo-box rounded-none md:col-span-2">
           <CardHeader className="border-b-2 border-border pb-2">
             <CardTitle className="font-black text-lg flex items-center gap-2">
-              <ListIcon /> MODULE_STATUS
+              <ListIcon /> 模块状态
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-6 grid grid-cols-3 gap-4">
@@ -86,21 +86,21 @@ export default function Home() {
         <Card className="neo-box rounded-none">
           <CardHeader className="border-b-2 border-border pb-2 bg-muted/20">
             <CardTitle className="font-black text-lg flex items-center gap-2">
-              <ServerIcon /> SYSTEM_HEALTH
+              <ServerIcon /> 系统健康
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-4 space-y-4">
-            <HealthItem label="FRONTEND_SVC" status="operational" />
-            <HealthItem label="BACKEND_API" status="operational" />
-            <HealthItem label="DATABASE_CONN" status="operational" />
-            <HealthItem label="AUTH_SERVICE" status="operational" />
+            <HealthItem label="前端服务" status="operational" />
+            <HealthItem label="后端 API" status="operational" />
+            <HealthItem label="数据库连接" status="operational" />
+            <HealthItem label="认证服务" status="operational" />
           </CardContent>
         </Card>
 
         <Card className="neo-box rounded-none">
           <CardHeader className="border-b-2 border-border pb-2 bg-muted/20">
             <CardTitle className="font-black text-lg flex items-center gap-2">
-              <HistoryIcon /> RECENT_ACTIVITY
+              <HistoryIcon /> 最近活动
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
@@ -123,7 +123,7 @@ export default function Home() {
             <div className="mt-4 pt-2 border-t-2 border-dashed border-border text-center">
               <Link href="/status">
                 <span className="text-sm font-bold hover:underline cursor-pointer flex items-center justify-center gap-1">
-                  VIEW_FULL_LOG <ArrowRight className="w-4 h-4" />
+                  查看完整日志 <ArrowRight className="w-4 h-4" />
                 </span>
               </Link>
             </div>
