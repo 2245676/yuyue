@@ -279,72 +279,87 @@ export default function ReservationsTableView() {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-background">
-      {/* 顶部工具栏 */}
-      <div className="flex-none border-b-4 border-black bg-white p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+    <div className="h-screen flex flex-col bg-gray-50">
+      {/* 顶部导航栏 */}
+      <div className="flex-none bg-white p-4 pb-0">
+        {/* 日期选择器和操作按钮 */}
+        <div className="flex items-center justify-between mb-4">
+          {/* 圆角日期导航 */}
+          <div className="flex items-center gap-3 bg-gray-100 rounded-full px-4 py-2">
             <Button
-              variant="outline"
+              variant="ghost"
               size="icon"
               onClick={() => setSelectedDate(subDays(selectedDate, 1))}
-              className="border-2 border-black rounded-none"
+              className="h-8 w-8 rounded-full hover:bg-gray-200"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-5 w-5" />
             </Button>
             
-            <div className="flex items-center gap-2">
-              <Calendar className="h-5 w-5" />
-              <span className="text-lg font-bold">
-                {format(selectedDate, "yyyy年MM月dd日", { locale: zhCN })}
+            <span className="text-base font-bold px-2">
+              {format(selectedDate, "M月d日", { locale: zhCN })}
+              <span className="ml-1 text-sm font-normal text-gray-600">
+                ({format(selectedDate, "E", { locale: zhCN })})
               </span>
-              <span className="text-sm text-muted-foreground">
-                {format(selectedDate, "EEEE", { locale: zhCN })}
-              </span>
-            </div>
+            </span>
 
             <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setSelectedDate(new Date())}
-              className="border-2 border-black rounded-none"
-            >
-              今天
-            </Button>
-
-            <Button
-              variant="outline"
+              variant="ghost"
               size="icon"
               onClick={() => setSelectedDate(addDays(selectedDate, 1))}
-              className="border-2 border-black rounded-none"
+              className="h-8 w-8 rounded-full hover:bg-gray-200"
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-5 w-5" />
             </Button>
           </div>
 
-          <Button
-            onClick={() => setIsCreateDialogOpen(true)}
-            className="bg-black text-white hover:bg-gray-800 border-2 border-black rounded-none"
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            新建预约
-          </Button>
+          {/* 右侧按钮 */}
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={() => setIsCreateDialogOpen(true)}
+              size="icon"
+              variant="ghost"
+              className="h-10 w-10 rounded-full hover:bg-gray-100"
+            >
+              <Plus className="h-6 w-6" />
+            </Button>
+            <Button
+              onClick={() => utils.reservation.getByDateRange.invalidate()}
+              size="icon"
+              variant="ghost"
+              className="h-10 w-10 rounded-full hover:bg-gray-100"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </Button>
+          </div>
+        </div>
+
+        {/* 标签页切换 */}
+        <div className="flex items-center gap-8 border-b border-gray-200">
+          <button className="relative pb-3 text-orange-500 font-medium">
+            タイムスケジュール
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-orange-500"></div>
+          </button>
+          <button className="pb-3 text-gray-500 font-medium hover:text-gray-700">
+            リスト
+          </button>
         </div>
       </div>
 
       {/* 日历网格 */}
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto pb-32">
         <div className="min-w-max">
           {/* 时间轴（顶部） */}
-          <div className="sticky top-0 z-10 bg-white border-b-4 border-black">
-            <div className="grid" style={{ gridTemplateColumns: `150px repeat(${timeSlots.length}, minmax(120px, 1fr))` }}>
-              <div className="border-r-4 border-black p-3 font-bold bg-gray-50 text-center">
+          <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
+            <div className="grid" style={{ gridTemplateColumns: `100px repeat(${timeSlots.length}, minmax(100px, 1fr))` }}>
+              <div className="border-r border-gray-200 p-3 font-medium bg-white text-center text-sm text-gray-600">
                 桌号
               </div>
               {timeSlots.map((time) => (
                 <div
                   key={time}
-                  className="border-r-2 border-black p-2 text-center font-bold text-sm bg-gray-50"
+                  className="border-r border-gray-200 p-2 text-center font-medium text-sm text-gray-700"
                 >
                   {time}
                 </div>
@@ -359,28 +374,35 @@ export default function ReservationsTableView() {
             return (
               <div
                 key={table.id}
-                className="border-b-2 border-black"
-                style={{ minHeight: "100px" }}
+                className="border-b border-gray-200"
+                style={{ minHeight: "80px" }}
               >
                 <div className="grid relative" style={{ 
-                  gridTemplateColumns: `150px repeat(${timeSlots.length}, minmax(120px, 1fr))`,
-                  minHeight: "100px"
+                  gridTemplateColumns: `100px repeat(${timeSlots.length}, minmax(100px, 1fr))`,
+                  minHeight: "80px"
                 }}>
                   {/* 桌号列 */}
-                  <div className="border-r-4 border-black p-4 bg-white sticky left-0 z-5 flex flex-col justify-center">
-                    <div className="font-bold text-xl">{table.tableNumber}</div>
-                    <div className="text-sm text-muted-foreground">{table.capacity}人</div>
-                    {table.area && <div className="text-xs text-muted-foreground">{table.area}</div>}
+                  <div className="border-r border-gray-200 p-3 bg-white sticky left-0 z-5 flex flex-col justify-center">
+                    <div className="font-bold text-base">{table.tableNumber}</div>
+                    <div className="text-xs text-gray-500">{table.capacity}人</div>
                   </div>
 
                   {/* 时间槽 */}
-                  {timeSlots.map((time) => (
-                    <div
-                      key={time}
-                      className="border-r-2 border-black hover:bg-gray-50 cursor-pointer transition-colors"
-                      onClick={() => handleCellClick(table.id, time)}
-                    />
-                  ))}
+                  {timeSlots.map((time) => {
+                    // 检查是否为非营业时间（这里假设16:00之前为非营业时间）
+                    const [hour] = time.split(":").map(Number);
+                    const isNonBusinessHour = hour < 16; // 根据实际营业时间调整
+                    
+                    return (
+                      <div
+                        key={time}
+                        className={`border-r border-gray-200 hover:bg-gray-100 cursor-pointer transition-colors ${
+                          isNonBusinessHour ? "bg-gray-100 bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,rgba(0,0,0,0.03)_10px,rgba(0,0,0,0.03)_20px)]" : "bg-white"
+                        }`}
+                        onClick={() => handleCellClick(table.id, time)}
+                      />
+                    );
+                  })}
 
                   {/* 预约卡片（绝对定位） */}
                   {tableReservations.map((reservation) => {
@@ -394,25 +416,22 @@ export default function ReservationsTableView() {
                       <Tooltip key={reservation.id}>
                         <TooltipTrigger asChild>
                           <div
-                            className={`absolute border-4 border-black rounded-none p-3 cursor-pointer hover:shadow-xl transition-shadow ${colorClass}`}
+                            className="absolute bg-gradient-to-r from-orange-400 to-orange-300 rounded-xl p-3 cursor-pointer hover:shadow-lg transition-all"
                             style={{
-                              left: `calc(150px + ${slotIndex * (100 / timeSlots.length)}%)`,
+                              left: `calc(100px + ${slotIndex * (100 / timeSlots.length)}%)`,
                               width: `calc(${slotsSpanned * (100 / timeSlots.length)}% - 8px)`,
-                              top: "10px",
-                              height: "calc(100% - 20px)",
+                              top: "8px",
+                              height: "calc(100% - 16px)",
                               zIndex: 1,
+                              boxShadow: "0 2px 8px rgba(255,152,0,0.2)",
                             }}
                             onClick={(e) => {
                               e.stopPropagation();
                               handleReservationClick(reservation);
                             }}
                           >
-                            <div className="text-sm font-bold">{format(resTime, "HH:mm")}</div>
-                            <div className="text-lg font-black truncate">{reservation.customerName}</div>
-                            <div className="text-sm">{reservation.partySize}人 · {getStatusText(reservation.status)}</div>
-                            {reservation.notes && (
-                              <div className="text-xs mt-1 opacity-90 truncate">{reservation.notes}</div>
-                            )}
+                            <div className="text-sm font-bold text-gray-800 truncate">{reservation.customerName}</div>
+                            <div className="text-xs text-gray-700 mt-0.5">{reservation.partySize}人</div>
                           </div>
                         </TooltipTrigger>
                         <TooltipContent className="max-w-xs">
@@ -768,6 +787,53 @@ export default function ReservationsTableView() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* 底部浮动按钮 */}
+      <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 z-20 hidden md:block">
+        <button className="bg-teal-500 hover:bg-teal-600 text-white font-medium px-6 py-3 rounded-full shadow-lg flex items-center gap-2 transition-all whitespace-nowrap">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          本日のネット予約を止める
+        </button>
+      </div>
+
+      {/* 底部导航栏 */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30">
+        {/* 顶部橙色指示条 */}
+        <div className="absolute top-0 left-0 w-1/4 h-1 bg-orange-500"></div>
+        <div className="flex items-center justify-around py-2">
+          <button className="flex flex-col items-center gap-1 px-4 py-2 text-orange-500 relative">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span className="text-xs font-medium">予約一覧</span>
+          </button>
+          
+          <button className="flex flex-col items-center gap-1 px-4 py-2 text-gray-500 hover:text-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+            </svg>
+            <span className="text-xs font-medium">ブロック</span>
+          </button>
+          
+          <button className="flex flex-col items-center gap-1 px-4 py-2 text-gray-500 hover:text-gray-700 relative">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+            </svg>
+            <span className="text-xs font-medium">通知一覧</span>
+            <div className="absolute top-1 right-2 w-2 h-2 bg-red-500 rounded-full"></div>
+          </button>
+          
+          <button className="flex flex-col items-center gap-1 px-4 py-2 text-gray-500 hover:text-gray-700 relative">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+            </svg>
+            <span className="text-xs font-medium">その他</span>
+            <div className="absolute top-1 right-2 w-2 h-2 bg-red-500 rounded-full"></div>
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
