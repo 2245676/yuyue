@@ -130,11 +130,12 @@ export default function Reservations() {
   // 获取所有桌位
   const { data: tables } = trpc.table.listActive.useQuery();
 
-  // 手势操作：左滑下一天，右滑上一天
+  // 手势操作：左滑下一天，右滑上一天（仅在顶部区域生效）
   const swipeHandlers = useSwipeable({
     onSwipedLeft: () => setSelectedDate(addDays(selectedDate, 1)),
     onSwipedRight: () => setSelectedDate(subDays(selectedDate, 1)),
     trackMouse: false,
+    preventScrollOnSwipe: false,
   });
 
   // 生成时间轴（9:00 - 23:00）
@@ -235,7 +236,7 @@ export default function Reservations() {
   }
 
   return (
-    <div className="space-y-6" {...swipeHandlers}>
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b-2 border-border pb-6">
         <div>
@@ -249,7 +250,7 @@ export default function Reservations() {
       </div>
 
       {/* Date Navigation */}
-      <Card className="neo-box rounded-none p-4">
+      <Card className="neo-box rounded-none p-4" {...swipeHandlers}>
         <div className="flex items-center justify-between">
           <Button
             variant="outline"

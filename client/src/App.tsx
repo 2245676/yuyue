@@ -7,13 +7,13 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Layout from "./components/Layout";
 
 import Tables from "./pages/Tables";
-import Reservations from "./pages/Reservations";
+import ReservationsWrapper from "./pages/ReservationsWrapper";
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
     <Layout>
       <Switch>
-        <Route path="/" component={Reservations} />
+        <Route path="/" component={ReservationsWrapper} />
         <Route path="/tables" component={Tables} />
         <Route component={NotFound} />
       </Switch>

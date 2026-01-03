@@ -1,0 +1,120 @@
+{
+  "query": "SELECT * FROM tables WHERE isActive = 1 ORDER BY tableNumber;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3rQpQGVk21knunY.e230ea61e9f0 --database cNs5uZG3ePbHucSLXQVo2f --execute SELECT * FROM tables WHERE isActive = 1 ORDER BY tableNumber;",
+  "rows": [
+    {
+      "id": "1",
+      "tableNumber": "1号桌",
+      "capacity": "4",
+      "area": "",
+      "type": "普通桌",
+      "isActive": "1",
+      "notes": "",
+      "createdAt": "2026-01-03 21:43:51",
+      "updatedAt": "2026-01-03 22:15:23"
+    },
+    {
+      "id": "2",
+      "tableNumber": "2号桌",
+      "capacity": "4",
+      "area": "",
+      "type": "普通桌",
+      "isActive": "1",
+      "notes": "",
+      "createdAt": "2026-01-03 21:43:51",
+      "updatedAt": "2026-01-03 22:15:48"
+    },
+    {
+      "id": "4",
+      "tableNumber": "5号桌",
+      "capacity": "6",
+      "area": "",
+      "type": "",
+      "isActive": "1",
+      "notes": "",
+      "createdAt": "2026-01-03 21:43:53",
+      "updatedAt": "2026-01-03 22:16:31"
+    },
+    {
+      "id": "7",
+      "tableNumber": "8号桌",
+      "capacity": "4",
+      "area": "",
+      "type": "普通桌",
+      "isActive": "1",
+      "notes": "",
+      "createdAt": "2026-01-03 21:58:16",
+      "updatedAt": "2026-01-03 22:17:06"
+    },
+    {
+      "id": "10",
+      "tableNumber": "ACTIVE-1767477498845",
+      "capacity": "4",
+      "area": "NULL",
+      "type": "NULL",
+      "isActive": "1",
+      "notes": "NULL",
+      "createdAt": "2026-01-03 21:58:18",
+      "updatedAt": "2026-01-03 21:58:18"
+    },
+    {
+      "id": "22",
+      "tableNumber": "ACTIVE-1767477560161",
+      "capacity": "4",
+      "area": "NULL",
+      "type": "NULL",
+      "isActive": "1",
+      "notes": "NULL",
+      "createdAt": "2026-01-03 21:59:20",
+      "updatedAt": "2026-01-03 21:59:20"
+    },
+    {
+      "id": "19",
+      "tableNumber": "TEST-1767477557743",
+      "capacity": "4",
+      "area": "测试区域",
+      "type": "普通桌",
+      "isActive": "1",
+      "notes": "这是一个测试桌位",
+      "createdAt": "2026-01-03 21:59:17",
+      "updatedAt": "2026-01-03 21:59:17"
+    },
+    {
+      "id": "25",
+      "tableNumber": "TEST-1767477583177",
+      "capacity": "4",
+      "area": "测试区域",
+      "type": "普通桌",
+      "isActive": "1",
+      "notes": "这是一个测试桌位",
+      "createdAt": "2026-01-03 21:59:43",
+      "updatedAt": "2026-01-03 21:59:43"
+    },
+    {
+      "id": "20",
+      "tableNumber": "UPDATE-TEST-1767477558183",
+      "capacity": "6",
+      "area": "更新后的区域",
+      "type": "普通桌",
+      "isActive": "1",
+      "notes": "NULL",
+      "createdAt": "2026-01-03 21:59:18",
+      "updatedAt": "2026-01-03 21:59:18"
+    },
+    {
+      "id": "26",
+      "tableNumber": "UPDATE-TEST-1767477583611",
+      "capacity": "6",
+      "area": "更新后的区域",
+      "type": "普通桌",
+      "isActive": "1",
+      "notes": "NULL",
+      "createdAt": "2026-01-03 21:59:43",
+      "updatedAt": "2026-01-03 21:59:44"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttableNumber\tcapacity\tarea\ttype\tisActive\tnotes\tcreatedAt\tupdatedAt\n1\t1号桌\t4\t\t普通桌\t1\t\t2026-01-03 21:43:51\t2026-01-03 22:15:23\n2\t2号桌\t4\t\t普通桌\t1\t\t2026-01-03 21:43:51\t2026-01-03 22:15:48\n4\t5号桌\t6\t\t\t1\t\t2026-01-03 21:43:53\t2026-01-03 22:16:31\n7\t8号桌\t4\t\t普通桌\t1\t\t2026-01-03 21:58:16\t2026-01-03 22:17:06\n10\tACTIVE-1767477498845\t4\tNULL\tNULL\t1\tNULL\t2026-01-03 21:58:18\t2026-01-03 21:58:18\n22\tACTIVE-1767477560161\t4\tNULL\tNULL\t1\tNULL\t2026-01-03 21:59:20\t2026-01-03 21:59:20\n19\tTEST-1767477557743\t4\t测试区域\t普通桌\t1\t这是一个测试桌位\t2026-01-03 21:59:17\t2026-01-03 21:59:17\n25\tTEST-1767477583177\t4\t测试区域\t普通桌\t1\t这是一个测试桌位\t2026-01-03 21:59:43\t2026-01-03 21:59:43\n20\tUPDATE-TEST-1767477558183\t6\t更新后的区域\t普通桌\t1\tNULL\t2026-01-03 21:59:18\t2026-01-03 21:59:18\n26\tUPDATE-TEST-1767477583611\t6\t更新后的区域\t普通桌\t1\tNULL\t2026-01-03 21:59:43\t2026-01-03 21:59:44\n",
+  "stderr": "",
+  "execution_time_ms": 1568
+}

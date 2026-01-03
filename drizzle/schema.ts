@@ -82,3 +82,22 @@ export const reservations = mysqlTable("reservations", {
 
 export type Reservation = typeof reservations.$inferSelect;
 export type InsertReservation = typeof reservations.$inferInsert;
+
+/**
+ * 系统配置表
+ * 用于存储系统级别的配置参数
+ */
+export const systemConfig = mysqlTable("system_config", {
+  id: int("id").autoincrement().primaryKey(),
+  /** 配置键 */
+  configKey: varchar("configKey", { length: 100 }).notNull().unique(),
+  /** 配置值 */
+  configValue: text("configValue").notNull(),
+  /** 配置描述 */
+  description: text("description"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type SystemConfig = typeof systemConfig.$inferSelect;
+export type InsertSystemConfig = typeof systemConfig.$inferInsert;

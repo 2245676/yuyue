@@ -5,6 +5,7 @@ import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { z } from "zod";
 import * as tableDb from "./tableDb";
 import * as reservationDb from "./reservationDb";
+import * as configDb from "./configDb";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -222,6 +223,41 @@ export const appRouter = router({
         await reservationDb.deleteReservation(input.id);
         return { success: true };
       }),
+  }),
+
+  // 系统配置路由
+  config: router({
+    // 获取所有配置
+    getAll: protectedProcedure.query(async () => {
+      return await configDb.getAllConfigs();
+    }),
+    
+    // 根据键获取配置
+    getByKey: protectedProcedure
+      .input(z.object({ key: z.string() }))
+      .query(async ({ input }) => {
+        return await configDb.getConfigByKey(input.key);
+      }),
+    
+    // 创建或更新配置
+    upsert: protectedProcedure
+      .input(
+        z.object({
+          key: z.string(),
+          value: z.string(),
+          description: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        await configDb.upsertConfig(input.key, input.value, input.description);
+        return { success: true };
+      }),
+    
+    // 初始化默认配置
+    initDefaults: protectedProcedure.mutation(async () => {
+      await configDb.initDefaultConfigs();
+      return { success: true };
+    }),
   }),
 });
 
