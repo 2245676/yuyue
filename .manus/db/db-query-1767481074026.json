@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO tables (tableNumber, capacity, area, type, notes, isActive) VALUES ('测试桌1', 4, '大厅', '普通桌', '测试创建', 1);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3rQpQGVk21knunY.e230ea61e9f0 --database cNs5uZG3ePbHucSLXQVo2f --execute INSERT INTO tables (tableNumber, capacity, area, type, notes, isActive) VALUES ('测试桌1', 4, '大厅', '普通桌', '测试创建', 1);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1660
+}

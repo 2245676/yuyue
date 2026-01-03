@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   Dialog,
   DialogContent,
@@ -32,6 +33,8 @@ export default function ReservationsTableView() {
   const [editingReservation, setEditingReservation] = useState<any>(null);
   const [selectedTable, setSelectedTable] = useState<number | null>(null);
   const [selectedTime, setSelectedTime] = useState<string>("");
+  const [lastClickTime, setLastClickTime] = useState<number>(0);
+  const [lastClickCell, setLastClickCell] = useState<string>("");
 
   const utils = trpc.useUtils();
   
@@ -184,9 +187,22 @@ export default function ReservationsTableView() {
   };
 
   const handleCellClick = (tableId: number, time: string) => {
-    setSelectedTable(tableId);
-    setSelectedTime(time);
-    setIsCreateDialogOpen(true);
+    const now = Date.now();
+    const cellKey = `${tableId}-${time}`;
+    
+    // 双击检测：500ms内点击同一单元格两次
+    if (now - lastClickTime < 500 && lastClickCell === cellKey) {
+      // 双击：打开创建对话框并预填信息
+      setSelectedTable(tableId);
+      setSelectedTime(time);
+      setIsCreateDialogOpen(true);
+      setLastClickTime(0);
+      setLastClickCell("");
+    } else {
+      // 单击：记录点击时间和位置
+      setLastClickTime(now);
+      setLastClickCell(cellKey);
+    }
   };
 
   const handleReservationClick = (reservation: any) => {
@@ -375,28 +391,74 @@ export default function ReservationsTableView() {
                       : reservation.reservationTime;
                     
                     return (
-                      <div
-                        key={reservation.id}
-                        className={`absolute border-4 border-black rounded-none p-3 cursor-pointer hover:shadow-xl transition-shadow ${colorClass}`}
-                        style={{
-                          left: `calc(150px + ${slotIndex * (100 / timeSlots.length)}%)`,
-                          width: `calc(${slotsSpanned * (100 / timeSlots.length)}% - 8px)`,
-                          top: "10px",
-                          height: "calc(100% - 20px)",
-                          zIndex: 1,
-                        }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleReservationClick(reservation);
-                        }}
-                      >
-                        <div className="text-sm font-bold">{format(resTime, "HH:mm")}</div>
-                        <div className="text-lg font-black truncate">{reservation.customerName}</div>
-                        <div className="text-sm">{reservation.partySize}人 · {getStatusText(reservation.status)}</div>
-                        {reservation.notes && (
-                          <div className="text-xs mt-1 opacity-90 truncate">{reservation.notes}</div>
-                        )}
-                      </div>
+                      <Tooltip key={reservation.id}>
+                        <TooltipTrigger asChild>
+                          <div
+                            className={`absolute border-4 border-black rounded-none p-3 cursor-pointer hover:shadow-xl transition-shadow ${colorClass}`}
+                            style={{
+                              left: `calc(150px + ${slotIndex * (100 / timeSlots.length)}%)`,
+                              width: `calc(${slotsSpanned * (100 / timeSlots.length)}% - 8px)`,
+                              top: "10px",
+                              height: "calc(100% - 20px)",
+                              zIndex: 1,
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleReservationClick(reservation);
+                            }}
+                          >
+                            <div className="text-sm font-bold">{format(resTime, "HH:mm")}</div>
+                            <div className="text-lg font-black truncate">{reservation.customerName}</div>
+                            <div className="text-sm">{reservation.partySize}人 · {getStatusText(reservation.status)}</div>
+                            {reservation.notes && (
+                              <div className="text-xs mt-1 opacity-90 truncate">{reservation.notes}</div>
+                            )}
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs">
+                          <div className="space-y-2">
+                            <div className="font-bold text-base">{reservation.customerName}</div>
+                            <div className="grid grid-cols-2 gap-2 text-sm">
+                              <div>
+                                <span className="text-muted-foreground">桌号：</span>
+                                <span className="font-medium">{tables.find(t => t.id === reservation.tableId)?.tableNumber}</span>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground">人数：</span>
+                                <span className="font-medium">{reservation.partySize}人</span>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground">时间：</span>
+                                <span className="font-medium">{format(resTime, "HH:mm")}</span>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground">时长：</span>
+                                <span className="font-medium">{reservation.duration}分钟</span>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground">状态：</span>
+                                <span className="font-medium">{getStatusText(reservation.status)}</span>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground">电话：</span>
+                                <span className="font-medium">{reservation.customerPhone}</span>
+                              </div>
+                            </div>
+                            {reservation.customerEmail && (
+                              <div className="text-sm">
+                                <span className="text-muted-foreground">邮箱：</span>
+                                <span className="font-medium">{reservation.customerEmail}</span>
+                              </div>
+                            )}
+                            {reservation.notes && (
+                              <div className="text-sm">
+                                <span className="text-muted-foreground">备注：</span>
+                                <span className="font-medium">{reservation.notes}</span>
+                              </div>
+                            )}
+                          </div>
+                        </TooltipContent>
+                      </Tooltip>
                     );
                   })}
                 </div>

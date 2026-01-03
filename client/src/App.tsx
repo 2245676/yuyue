@@ -8,6 +8,7 @@ import Layout from "./components/Layout";
 
 import Tables from "./pages/Tables";
 import ReservationsWrapper from "./pages/ReservationsWrapper";
+import Settings from "./pages/Settings";
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
@@ -15,6 +16,7 @@ function Router() {
       <Switch>
         <Route path="/" component={ReservationsWrapper} />
         <Route path="/tables" component={Tables} />
+        <Route path="/settings" component={Settings} />
         <Route component={NotFound} />
       </Switch>
     </Layout>

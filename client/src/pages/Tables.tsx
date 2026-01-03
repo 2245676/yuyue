@@ -62,12 +62,16 @@ export default function Tables() {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     
+    const area = formData.get("area") as string;
+    const type = formData.get("type") as string;
+    const notes = formData.get("notes") as string;
+    
     createMutation.mutate({
       tableNumber: formData.get("tableNumber") as string,
       capacity: parseInt(formData.get("capacity") as string),
-      area: formData.get("area") as string,
-      type: formData.get("type") as string,
-      notes: formData.get("notes") as string,
+      ...(area && { area }),
+      ...(type && { type }),
+      ...(notes && { notes }),
     });
   };
 
@@ -75,13 +79,17 @@ export default function Tables() {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     
+    const area = formData.get("area") as string;
+    const type = formData.get("type") as string;
+    const notes = formData.get("notes") as string;
+    
     updateMutation.mutate({
       id: editingTable.id,
       tableNumber: formData.get("tableNumber") as string,
       capacity: parseInt(formData.get("capacity") as string),
-      area: formData.get("area") as string,
-      type: formData.get("type") as string,
-      notes: formData.get("notes") as string,
+      ...(area && { area }),
+      ...(type && { type }),
+      ...(notes && { notes }),
     });
   };
 

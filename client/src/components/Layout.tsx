@@ -20,6 +20,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const navItems = [
     { href: "/", label: "预约管理", icon: CalendarDays },
     { href: "/tables", label: "桌位管理", icon: Utensils },
+    { href: "/settings", label: "系统设置", icon: Settings },
   ];
 
   return (
