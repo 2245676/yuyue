@@ -22,8 +22,9 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon } from "lucide-react";
-import { format, addDays, startOfDay, endOfDay, setHours, setMinutes, isSameDay, parseISO } from "date-fns";
+import { format, addDays, subDays, startOfDay, endOfDay, setHours, setMinutes, isSameDay, parseISO } from "date-fns";
 import { zhCN } from "date-fns/locale";
+import { useSwipeable } from "react-swipeable";
 
 export default function Reservations() {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -129,6 +130,13 @@ export default function Reservations() {
   // 获取所有桌位
   const { data: tables } = trpc.table.listActive.useQuery();
 
+  // 手势操作：左滑下一天，右滑上一天
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: () => setSelectedDate(addDays(selectedDate, 1)),
+    onSwipedRight: () => setSelectedDate(subDays(selectedDate, 1)),
+    trackMouse: false,
+  });
+
   // 生成时间轴（9:00 - 23:00）
   const timeSlots = useMemo(() => {
     const slots = [];
@@ -227,7 +235,7 @@ export default function Reservations() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" {...swipeHandlers}>
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b-2 border-border pb-6">
         <div>
@@ -284,20 +292,19 @@ export default function Reservations() {
       </Card>
 
       {/* Calendar View */}
-      <div className="overflow-x-auto">
-        <div className="min-w-[800px]">
-          {/* Header Row - Table Numbers */}
-          <div className="flex border-b-2 border-border">
-            <div className="w-20 flex-shrink-0 border-r-2 border-border p-2 bg-muted">
-              <div className="text-xs font-bold text-center">时间</div>
+      <Card className="neo-box rounded-none overflow-hidden">
+        <div className="overflow-x-auto">
+          {/* Table Headers */}
+          <div className="flex border-b-2 border-border bg-background">
+            <div className="w-16 md:w-20 flex-shrink-0 border-r-2 border-border p-1 md:p-2">
+              <div className="text-xs font-black text-center">时间</div>
             </div>
             <div className="flex-1 flex">
               {tables?.map((table) => (
                 <div
                   key={table.id}
-                  className="flex-1 min-w-[120px] border-r-2 border-border p-2 bg-muted"
-                >
-                  <div className="text-sm font-black text-center">{table.tableNumber}</div>
+                  className="flex-1 min-w-[100px] md:min-w-[120px] border-r-2 border-border p-1 md:p-2 bg-muted">
+                  <div className="text-xs md:text-sm font-black text-center">{table.tableNumber}</div>
                   <div className="text-xs text-muted-foreground text-center font-mono">
                     {table.capacity}人
                   </div>
@@ -309,12 +316,11 @@ export default function Reservations() {
           {/* Time Slots and Reservations */}
           <div className="flex relative">
             {/* Time Column */}
-            <div className="w-20 flex-shrink-0 border-r-2 border-border">
+            <div className="w-16 md:w-20 flex-shrink-0 border-r-2 border-border">
               {timeSlots.map((slot) => (
                 <div
                   key={slot.hour}
-                  className="h-20 border-b border-border flex items-center justify-center"
-                >
+                  className="h-16 md:h-20 border-b border-border flex items-center justify-center">
                   <div className="text-xs font-mono font-bold">{slot.label}</div>
                 </div>
               ))}
@@ -322,12 +328,13 @@ export default function Reservations() {
 
             {/* Reservation Columns */}
             <div className="flex-1 flex relative">
-              {tables?.map((table) => (
+              {tables?.map((table) => {
+                const slotHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? 64 : 80;
+                return (
                 <div
                   key={table.id}
-                  className="flex-1 min-w-[120px] border-r-2 border-border relative"
-                  style={{ height: `${timeSlots.length * 80}px` }}
-                >
+                  className="flex-1 min-w-[100px] md:min-w-[120px] border-r-2 border-border relative"
+                  style={{ height: `${timeSlots.length * slotHeight}px` }}>
                   {/* Hour Lines */}
                   {timeSlots.map((slot) => (
                     <div
@@ -375,11 +382,12 @@ export default function Reservations() {
                     );
                   })}
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* Empty State */}
       {(!tables || tables.length === 0) && (
@@ -394,7 +402,7 @@ export default function Reservations() {
 
       {/* Create Reservation Dialog */}
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-        <DialogContent className="neo-box rounded-none max-w-md">
+        <DialogContent className="neo-box rounded-none max-w-md md:max-w-md w-full md:w-auto h-full md:h-auto overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="font-black text-2xl">新建预约</DialogTitle>
             <DialogDescription className="font-mono">
@@ -532,7 +540,7 @@ export default function Reservations() {
 
       {/* Edit Reservation Dialog */}
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-        <DialogContent className="neo-box rounded-none max-w-md">
+        <DialogContent className="neo-box rounded-none max-w-md md:max-w-md w-full md:w-auto h-full md:h-auto overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="font-black text-2xl">编辑预约</DialogTitle>
             <DialogDescription className="font-mono">
