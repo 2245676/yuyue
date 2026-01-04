@@ -335,6 +335,45 @@ export default function ReservationsTableView() {
           </div>
         </div>
 
+        {/* 当日预约统计面板 */}
+        <div className="grid grid-cols-3 gap-4 py-4">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border-2 border-blue-200">
+            <div className="text-sm text-blue-600 font-medium mb-1">总预约数</div>
+            <div className="text-3xl font-bold text-blue-700">
+              {reservations?.filter(r => {
+                const resDate = typeof r.reservationTime === 'string' 
+                  ? parseISO(r.reservationTime) 
+                  : r.reservationTime;
+                return format(resDate, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd');
+              }).length || 0}
+            </div>
+          </div>
+          
+          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 border-2 border-green-200">
+            <div className="text-sm text-green-600 font-medium mb-1">已到店</div>
+            <div className="text-3xl font-bold text-green-700">
+              {reservations?.filter(r => {
+                const resDate = typeof r.reservationTime === 'string' 
+                  ? parseISO(r.reservationTime) 
+                  : r.reservationTime;
+                return format(resDate, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd') && r.status === 'completed';
+              }).length || 0}
+            </div>
+          </div>
+          
+          <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-4 border-2 border-orange-200">
+            <div className="text-sm text-orange-600 font-medium mb-1">未到店</div>
+            <div className="text-3xl font-bold text-orange-700">
+              {reservations?.filter(r => {
+                const resDate = typeof r.reservationTime === 'string' 
+                  ? parseISO(r.reservationTime) 
+                  : r.reservationTime;
+                return format(resDate, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd') && ['pending', 'confirmed'].includes(r.status);
+              }).length || 0}
+            </div>
+          </div>
+        </div>
+
         {/* 标签页切换 */}
         <div className="flex items-center gap-8 border-b border-gray-200">
           <button className="relative pb-3 text-orange-500 font-medium">
