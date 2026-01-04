@@ -25,6 +25,7 @@ import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon } from "lucid
 import { format, addDays, subDays, startOfDay, endOfDay, setHours, setMinutes, isSameDay, parseISO } from "date-fns";
 import { zhCN } from "date-fns/locale";
 import { useSwipeable } from "react-swipeable";
+import { TABLE_COLUMN_WIDTH, TIME_SLOT_WIDTH, getRowHeight } from "@/config/layoutConfig";
 
 export default function Reservations() {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -169,15 +170,15 @@ export default function Reservations() {
     const hour = time.getHours();
     const minute = time.getMinutes();
     
-    // 动态计算slotHeight（与渲染逻辑保持一致）
-    const slotHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? 48 : 64;
+    // 使用配置的行高
+    const rowHeight = getRowHeight();
     
     // 计算距离9:00的偏移量（以小时为单位）
     const offsetHours = hour - 9 + minute / 60;
-    const top = offsetHours * slotHeight;
+    const top = offsetHours * rowHeight;
     
     // 计算高度
-    const height = (duration / 60) * slotHeight;
+    const height = (duration / 60) * rowHeight;
     
     return { top, height };
   };
@@ -300,93 +301,86 @@ export default function Reservations() {
         <div className="overflow-x-auto">
           {/* Table Headers */}
           <div className="flex border-b-2 border-border bg-background">
-            <div className="w-12 md:w-16 flex-shrink-0 border-r-2 border-border p-1">
-              <div className="text-xs font-black text-center">时间</div>
+            <div className="flex-shrink-0 border-r-2 border-border p-1" style={{ width: `${TABLE_COLUMN_WIDTH}px` }}>
+              <div className="text-xs font-black text-center">桌号</div>
             </div>
-            <div className="flex-1 flex">
-              {tables?.map((table) => (
+            <div className="flex-1 flex overflow-x-auto">
+              {timeSlots.map((slot) => (
                 <div
-                  key={table.id}
-                  className="flex-1 min-w-[70px] md:min-w-[90px] border-r-2 border-border p-1 bg-muted">
-                  <div className="text-xs md:text-sm font-black text-center">{table.tableNumber}</div>
-                  <div className="text-xs text-muted-foreground text-center font-mono">
-                    {table.capacity}人
-                  </div>
+                  key={slot.hour}
+                  className="flex-shrink-0 border-r border-border p-1 bg-background"
+                  style={{ width: `${TIME_SLOT_WIDTH}px` }}>
+                  <div className="text-xs font-mono font-bold text-center">{slot.label}</div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Time Slots and Reservations */}
-          <div className="flex relative">
-            {/* Time Column */}
-            <div className="w-12 md:w-16 flex-shrink-0 border-r-2 border-border">
-              {timeSlots.map((slot) => (
-                <div
-                  key={slot.hour}
-                  className="h-12 md:h-16 border-b border-border flex items-center justify-center">
-                  <div className="text-xs font-mono font-bold">{slot.label}</div>
-                </div>
-              ))}
-            </div>
+          {/* Table Rows */}
+          <div className="relative">
+            {tables?.map((table) => {
+              const rowHeight = getRowHeight();
+              return (
+                <div key={table.id} className="flex border-b border-border">
+                  {/* Table Number Column */}
+                  <div 
+                    className="flex-shrink-0 border-r-2 border-border flex items-center justify-center bg-muted"
+                    style={{ width: `${TABLE_COLUMN_WIDTH}px`, height: `${rowHeight}px` }}>
+                    <div className="text-xs font-black text-center">{table.tableNumber}</div>
+                  </div>
 
-            {/* Reservation Columns */}
-            <div className="flex-1 flex relative">
-              {tables?.map((table) => {
-                const slotHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? 48 : 64;
-                return (
-                <div
-                  key={table.id}
-                  className="flex-1 min-w-[70px] md:min-w-[90px] border-r-2 border-border relative"
-                  style={{ height: `${timeSlots.length * slotHeight}px` }}>
-                  {/* Hour Lines */}
-                  {timeSlots.map((slot, index) => (
-                    <div
-                      key={slot.hour}
-                      className="absolute left-0 right-0 border-b border-border"
-                      style={{ 
-                        top: `${index * slotHeight}px`,
-                        height: `${slotHeight}px`
-                      }}
-                    />
-                  ))}
-
-                  {/* Reservations */}
-                  {reservationsByTable[table.id]?.map((reservation) => {
-                    const { top, height } = getReservationPosition(
-                      reservation.reservationTime,
-                      reservation.duration
-                    );
-                    const time = typeof reservation.reservationTime === "string" 
-                      ? parseISO(reservation.reservationTime) 
-                      : reservation.reservationTime;
-
-                    return (
+                  {/* Time Slots for this table */}
+                  <div className="flex-1 flex relative" style={{ height: `${rowHeight}px` }}>
+                    {timeSlots.map((slot) => (
                       <div
-                        key={reservation.id}
-                        className={`absolute left-0.5 right-0.5 p-1 md:p-1.5 border ${getStatusColor(
-                          reservation.status
-                        )} text-white rounded-sm cursor-pointer hover:opacity-80 transition-opacity overflow-hidden`}
-                        style={{ top: `${top}px`, height: `${height}px` }}
-                        title={`${reservation.customerName} - ${reservation.partySize}人`}
-                        onClick={() => handleReservationClick(reservation)}
-                      >
-                        <div className="text-[10px] md:text-xs font-bold truncate leading-tight">
-                          {format(time, "HH:mm")}
-                        </div>
-                        <div className="text-xs md:text-sm font-black truncate leading-tight">
-                          {reservation.customerName}
-                        </div>
-                        <div className="text-[10px] md:text-xs font-mono truncate leading-tight">
-                          {reservation.partySize}人
-                        </div>
+                        key={slot.hour}
+                        className="flex-shrink-0 border-r border-border relative"
+                        style={{ width: `${TIME_SLOT_WIDTH}px` }}>
+                        {/* Reservations in this time slot */}
+                        {reservationsByTable[table.id]
+                          ?.filter((reservation) => {
+                            const resTime = typeof reservation.reservationTime === "string" 
+                              ? parseISO(reservation.reservationTime) 
+                              : reservation.reservationTime;
+                            const resHour = resTime.getHours();
+                            const resMinute = resTime.getMinutes();
+                            const slotStart = slot.hour;
+                            const slotEnd = slot.hour + 0.5; // 30分钟一个格子
+                            const resTimeDecimal = resHour + resMinute / 60;
+                            return resTimeDecimal >= slotStart && resTimeDecimal < slotEnd;
+                          })
+                          .map((reservation) => {
+                            const time = typeof reservation.reservationTime === "string" 
+                              ? parseISO(reservation.reservationTime) 
+                              : reservation.reservationTime;
+
+                            return (
+                              <div
+                                key={reservation.id}
+                                className={`absolute inset-0.5 p-1 border ${getStatusColor(
+                                  reservation.status
+                                )} text-white rounded-sm cursor-pointer hover:opacity-80 transition-opacity overflow-hidden`}
+                                title={`${reservation.customerName} - ${reservation.partySize}人`}
+                                onClick={() => handleReservationClick(reservation)}
+                              >
+                                <div className="text-[10px] font-bold truncate leading-tight">
+                                  {format(time, "HH:mm")}
+                                </div>
+                                <div className="text-xs font-black truncate leading-tight">
+                                  {reservation.customerName}
+                                </div>
+                                <div className="text-[10px] font-mono truncate leading-tight">
+                                  {reservation.partySize}人
+                                </div>
+                              </div>
+                            );
+                          })}
                       </div>
-                    );
-                  })}
+                    ))}
+                  </div>
                 </div>
-                );
-              })}
-            </div>
+              );
+            })}
           </div>
         </div>
       </Card>

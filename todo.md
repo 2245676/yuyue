@@ -111,3 +111,14 @@
 - [x] 优化预约卡片样式（更小的padding和字体）
 - [x] 更新getReservationPosition函数使用动态slotHeight
 - [x] 确保7个桌位可以完整显示在屏幕上
+
+## 极简桌号列布局实现
+- [x] 创建布局配置文件 layoutConfig.ts
+- [x] 定义 tableColumnWidth（默认40px）
+- [x] 定义 timeSlotWidth（固定64px）
+- [x] 定义 rowHeight（响应式：40-48px）
+- [x] 修改预约页面使用配置变量
+- [x] 替换所有硬编码的宽度和高度值
+- [x] 确保桌号列与时间格行高完全一致
+- [x] 测试响应式行高逻辑
+- [x] 测试桌号列固定不滚动
