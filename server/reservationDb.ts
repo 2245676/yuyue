@@ -1,4 +1,4 @@
-import { eq, and, gte, lte, between } from "drizzle-orm";
+import { eq, ne, and, gte, lte, between } from "drizzle-orm";
 import { reservations, InsertReservation } from "../drizzle/schema";
 import { getDb } from "./db";
 
@@ -154,7 +154,7 @@ export async function checkReservationConflict(
 
   // 如果是更新操作，排除当前预约
   if (excludeId) {
-    conditions.push(eq(reservations.id, excludeId));
+    conditions.push(ne(reservations.id, excludeId));
   }
 
   const conflicts = await db

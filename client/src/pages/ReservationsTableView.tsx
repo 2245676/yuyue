@@ -100,8 +100,8 @@ export default function ReservationsTableView() {
   // 生成时间槽
   const timeSlots = useMemo(() => {
     const slots: string[] = [];
-    const [startHour, startMinute] = businessStartTime.split(":").map(Number);
-    const [endHour, endMinute] = businessEndTime.split(":").map(Number);
+    const [startHour, startMinute] = String(businessStartTime).split(":").map(Number);
+    const [endHour, endMinute] = String(businessEndTime).split(":").map(Number);
     
     const startMinutes = startHour * 60 + startMinute;
     const endMinutes = endHour * 60 + endMinute;
@@ -217,7 +217,7 @@ export default function ReservationsTableView() {
     const resMinute = resTime.getMinutes();
     const resMinutes = resHour * 60 + resMinute;
     
-    const [startHour, startMinute] = businessStartTime.split(":").map(Number);
+    const [startHour, startMinute] = String(businessStartTime).split(":").map(Number);
     const startMinutes = startHour * 60 + startMinute;
     
     const offsetMinutes = resMinutes - startMinutes;
@@ -390,7 +390,7 @@ export default function ReservationsTableView() {
                   {/* 时间槽 */}
                   {timeSlots.map((time) => {
                     // 检查是否为非营业时间（这里假设16:00之前为非营业时间）
-                    const [hour] = time.split(":").map(Number);
+                    const [hour] = String(time).split(":").map(Number);
                     const isNonBusinessHour = hour < 16; // 根据实际营业时间调整
                     
                     return (
