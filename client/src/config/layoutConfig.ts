@@ -7,19 +7,19 @@
 
 /**
  * 桌号列宽度（左侧固定列）
- * 默认: 30px
+ * 默认: 50px
  * 
  * 修改此变量可调整桌号列的宽度
  */
-export const TABLE_COLUMN_WIDTH = 30;
+export const TABLE_COLUMN_WIDTH = 50;
 
 /**
  * 时间格宽度（中间网格区域）
- * 固定: 64px
+ * 固定: 60px
  * 
  * 修改此变量可调整时间格的宽度
  */
-export const TIME_SLOT_WIDTH = 64;
+export const TIME_SLOT_WIDTH = 60;
 
 /**
  * 获取行高
@@ -48,9 +48,9 @@ export const getRowHeight = (): number => {
 
 /**
  * 行高常量（用于非响应式场景）
- * 默认: 44px
+ * 默认: 50px
  */
-export const DEFAULT_ROW_HEIGHT = 44;
+export const DEFAULT_ROW_HEIGHT = 50;
 
 /**
  * 最小行高

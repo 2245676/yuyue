@@ -3,7 +3,7 @@ import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { TABLE_COLUMN_WIDTH } from "@/config/layoutConfig";
+import { TABLE_COLUMN_WIDTH, TIME_SLOT_WIDTH } from "@/config/layoutConfig";
 import {
   Dialog,
   DialogContent,
@@ -348,11 +348,11 @@ export default function ReservationsTableView() {
       </div>
 
       {/* 日历网格 */}
-      <div className="flex-1 overflow-auto pb-32">
+      <div className="flex-1 overflow-auto">
         <div className="min-w-max">
           {/* 时间轴（顶部） */}
           <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
-            <div className="grid" style={{ gridTemplateColumns: `${TABLE_COLUMN_WIDTH}px repeat(${timeSlots.length}, minmax(100px, 1fr))` }}>
+            <div className="grid" style={{ gridTemplateColumns: `${TABLE_COLUMN_WIDTH}px repeat(${timeSlots.length}, minmax(${TIME_SLOT_WIDTH}px, 1fr))` }}>
               <div className="border-r border-gray-200 p-3 font-medium bg-white text-center text-sm text-gray-600">
                 桌号
               </div>
@@ -375,11 +375,11 @@ export default function ReservationsTableView() {
               <div
                 key={table.id}
                 className="border-b border-gray-200"
-                style={{ minHeight: "80px" }}
+                style={{ minHeight: "50px" }}
               >
                 <div className="grid relative" style={{ 
-                  gridTemplateColumns: `${TABLE_COLUMN_WIDTH}px repeat(${timeSlots.length}, minmax(100px, 1fr))`,
-                  minHeight: "80px"
+                  gridTemplateColumns: `${TABLE_COLUMN_WIDTH}px repeat(${timeSlots.length}, minmax(${TIME_SLOT_WIDTH}px, 1fr))`,
+                  minHeight: "50px"
                 }}>
                   {/* 桌号列 */}
                   <div className="border-r border-gray-200 p-3 bg-white sticky left-0 z-5 flex flex-col justify-center">
@@ -793,52 +793,7 @@ export default function ReservationsTableView() {
         </DialogContent>
       </Dialog>
 
-      {/* 底部浮动按钮 */}
-      <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 z-20 hidden md:block">
-        <button className="bg-teal-500 hover:bg-teal-600 text-white font-medium px-6 py-3 rounded-full shadow-lg flex items-center gap-2 transition-all whitespace-nowrap">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-          关闭今日预约
-        </button>
-      </div>
 
-      {/* 底部导航栏 */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30">
-        {/* 顶部橙色指示条 */}
-        <div className="absolute top-0 left-0 w-1/4 h-1 bg-orange-500"></div>
-        <div className="flex items-center justify-around py-2">
-          <button className="flex flex-col items-center gap-1 px-4 py-2 text-orange-500 relative">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            <span className="text-xs font-medium">予約一覧</span>
-          </button>
-          
-          <button className="flex flex-col items-center gap-1 px-4 py-2 text-gray-500 hover:text-gray-700">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
-            </svg>
-            <span className="text-xs font-medium">ブロック</span>
-          </button>
-          
-          <button className="flex flex-col items-center gap-1 px-4 py-2 text-gray-500 hover:text-gray-700 relative">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-            </svg>
-            <span className="text-xs font-medium">通知一覧</span>
-            <div className="absolute top-1 right-2 w-2 h-2 bg-red-500 rounded-full"></div>
-          </button>
-          
-          <button className="flex flex-col items-center gap-1 px-4 py-2 text-gray-500 hover:text-gray-700 relative">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-            </svg>
-            <span className="text-xs font-medium">その他</span>
-            <div className="absolute top-1 right-2 w-2 h-2 bg-red-500 rounded-full"></div>
-          </button>
-        </div>
-      </div>
     </div>
   );
 }

@@ -132,3 +132,11 @@
 - [x] 替换所有硬编码的桌号列宽度
 - [x] 确保桌号列固定不滚动
 - [x] 测试显示效果
+
+## 调整布局尺寸并删除底部操作栏
+- [x] 调整 TABLE_COLUMN_WIDTH 为 50px（让"1号桌"横向显示）
+- [x] 添加时间格宽度配置 TIME_SLOT_WIDTH = 60px
+- [x] 添加行高配置 ROW_HEIGHT = 50px
+- [x] 修改 ReservationsTableView 使用新的尺寸配置
+- [x] 删除底部固定操作栏及其内容
+- [x] 测试显示效果
