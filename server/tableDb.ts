@@ -40,7 +40,24 @@ export async function createTable(table: InsertTable) {
     throw new Error("Database not available");
   }
 
-  const result = await db.insert(tables).values(table);
+  // 记录详细的输入参数
+  console.log("[Database] Creating table with params:", JSON.stringify(table, null, 2));
+  console.log("[Database] Param types:", {
+    tableNumber: typeof table.tableNumber,
+    capacity: typeof table.capacity,
+    area: typeof table.area,
+    type: typeof table.type,
+  });
+
+  // 确保 capacity 是数字类型
+  const validatedTable = {
+    ...table,
+    capacity: typeof table.capacity === 'string' ? parseInt(table.capacity) : table.capacity,
+  };
+
+  console.log("[Database] Validated table:", JSON.stringify(validatedTable, null, 2));
+
+  const result = await db.insert(tables).values(validatedTable);
   return result;
 }
 

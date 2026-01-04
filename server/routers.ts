@@ -6,6 +6,7 @@ import { z } from "zod";
 import * as tableDb from "./tableDb";
 import * as reservationDb from "./reservationDb";
 import * as configDb from "./configDb";
+import { logger } from "./logger";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -142,25 +143,35 @@ export const appRouter = router({
         })
       )
       .mutation(async ({ input, ctx }) => {
-        const reservationTime = typeof input.reservationTime === "string" ? new Date(input.reservationTime) : input.reservationTime;
-        
-        // 检查时间冲突
-        const hasConflict = await reservationDb.checkReservationConflict(
-          input.tableId,
-          reservationTime,
-          input.duration
-        );
-        
-        if (hasConflict) {
-          throw new Error("该时间段已有预约，请选择其他时间");
+        try {
+          logger.logApiRequest("POST", "/reservation/create", ctx.user?.id?.toString());
+          
+          const reservationTime = typeof input.reservationTime === "string" ? new Date(input.reservationTime) : input.reservationTime;
+          
+          // 检查时间冲突
+          const hasConflict = await reservationDb.checkReservationConflict(
+            input.tableId,
+            reservationTime,
+            input.duration
+          );
+          
+          if (hasConflict) {
+            logger.warn("预约时间冲突", { tableId: input.tableId, reservationTime, userId: ctx.user?.id?.toString() });
+            throw new Error("该时间段已有预约，请选择其他时间");
+          }
+          
+          await reservationDb.createReservation({
+            ...input,
+            reservationTime,
+            createdBy: ctx.user?.id,
+          });
+          
+          logger.info("预约创建成功", { tableId: input.tableId, userId: ctx.user?.id?.toString() });
+          return { success: true };
+        } catch (error) {
+          logger.logApiError("POST", "/reservation/create", error as Error, ctx.user?.id?.toString());
+          throw error;
         }
-        
-        await reservationDb.createReservation({
-          ...input,
-          reservationTime,
-          createdBy: ctx.user?.id,
-        });
-        return { success: true };
       }),
     
     // 更新预约

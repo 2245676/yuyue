@@ -25,6 +25,7 @@ import { Calendar, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { format, addDays, subDays, parseISO, startOfDay, endOfDay } from "date-fns";
 import { zhCN } from "date-fns/locale";
+import { logger } from "@/lib/logger";
 
 export default function ReservationsTableView() {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -63,36 +64,42 @@ export default function ReservationsTableView() {
 
   const createMutation = trpc.reservation.create.useMutation({
     onSuccess: () => {
+      logger.info("预约创建成功", { component: "ReservationsTableView", action: "createReservation" });
       utils.reservation.getByDateRange.invalidate();
       setIsCreateDialogOpen(false);
       resetForm();
       toast.success("预约创建成功");
     },
     onError: (error) => {
+      logger.error("预约创建失败", new Error(error.message), { component: "ReservationsTableView", action: "createReservation" });
       toast.error(`创建失败: ${error.message}`);
     },
   });
 
   const updateMutation = trpc.reservation.update.useMutation({
     onSuccess: () => {
+      logger.info("预约更新成功", { component: "ReservationsTableView", action: "updateReservation" });
       utils.reservation.getByDateRange.invalidate();
       setIsEditDialogOpen(false);
       setEditingReservation(null);
       toast.success("预约更新成功");
     },
     onError: (error) => {
+      logger.error("预约更新失败", new Error(error.message), { component: "ReservationsTableView", action: "updateReservation" });
       toast.error(`更新失败: ${error.message}`);
     },
   });
 
   const deleteMutation = trpc.reservation.delete.useMutation({
     onSuccess: () => {
+      logger.info("预约删除成功", { component: "ReservationsTableView", action: "deleteReservation" });
       utils.reservation.getByDateRange.invalidate();
       setIsEditDialogOpen(false);
       setEditingReservation(null);
       toast.success("预约已删除");
     },
     onError: (error) => {
+      logger.error("预约删除失败", new Error(error.message), { component: "ReservationsTableView", action: "deleteReservation" });
       toast.error(`删除失败: ${error.message}`);
     },
   });
@@ -212,7 +219,9 @@ export default function ReservationsTableView() {
 
   // 计算预约卡片的位置和宽度
   const getReservationStyle = (reservation: any) => {
-    const resTime = parseISO(reservation.reservationTime);
+    const resTime = typeof reservation.reservationTime === 'string' 
+      ? parseISO(reservation.reservationTime) 
+      : new Date(reservation.reservationTime);
     const resHour = resTime.getHours();
     const resMinute = resTime.getMinutes();
     const resMinutes = resHour * 60 + resMinute;
@@ -322,16 +331,6 @@ export default function ReservationsTableView() {
             >
               <Plus className="h-6 w-6" />
             </Button>
-            <Button
-              onClick={() => utils.reservation.getByDateRange.invalidate()}
-              size="icon"
-              variant="ghost"
-              className="h-10 w-10 rounded-full hover:bg-gray-100"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-            </Button>
           </div>
         </div>
 
@@ -396,8 +395,8 @@ export default function ReservationsTableView() {
                     return (
                       <div
                         key={time}
-                        className={`border-r border-gray-200 hover:bg-gray-100 cursor-pointer transition-colors ${
-                          isNonBusinessHour ? "bg-gray-100 bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,rgba(0,0,0,0.03)_10px,rgba(0,0,0,0.03)_20px)]" : "bg-white"
+                        className={`border-r border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors ${
+                          isNonBusinessHour ? "bg-gray-50" : "bg-white"
                         }`}
                         onClick={() => handleCellClick(table.id, time)}
                       />
@@ -653,7 +652,12 @@ export default function ReservationsTableView() {
                   <Label htmlFor="edit-time">预约时间</Label>
                   <Select
                     name="time"
-                    defaultValue={format(parseISO(editingReservation.reservationTime), "HH:mm")}
+                    defaultValue={format(
+                      typeof editingReservation.reservationTime === 'string' 
+                        ? parseISO(editingReservation.reservationTime) 
+                        : new Date(editingReservation.reservationTime), 
+                      "HH:mm"
+                    )}
                     required
                   >
                     <SelectTrigger className="border-2 border-black rounded-none">

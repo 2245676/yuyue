@@ -1,10 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { 
-  LayoutDashboard, 
-  ListTodo, 
   CalendarDays, 
-  Activity, 
   Settings,
   Menu,
   X,
@@ -12,88 +9,83 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
-    { href: "/", label: "预约管理", icon: CalendarDays },
-    { href: "/tables", label: "桌位管理", icon: Utensils },
-    { href: "/settings", label: "系统设置", icon: Settings },
+    { href: "/", label: "予約管理", icon: CalendarDays },
+    { href: "/tables", label: "テーブル管理", icon: Utensils },
+    { href: "/settings", label: "システム設定", icon: Settings },
   ];
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-background font-mono">
-      {/* Mobile Header */}
-      <div className="md:hidden flex items-center justify-between p-4 border-b-2 border-border bg-card z-50 sticky top-0">
-        <div className="font-black text-xl tracking-tighter">餐厅预约系统</div>
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="border-2 border-border rounded-none active:translate-y-1"
-        >
-          {isMobileMenuOpen ? <X /> : <Menu />}
-        </Button>
-      </div>
-
-      {/* Sidebar Navigation */}
-      <aside className={cn(
-        "fixed inset-y-0 left-0 z-40 w-64 bg-sidebar border-r-2 border-border transform transition-transform duration-200 ease-in-out md:translate-x-0 md:static md:h-screen overflow-y-auto",
-        isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-      )}>
-        <div className="p-6 border-b-2 border-border hidden md:block">
-          <div className="font-black text-2xl tracking-tighter">餐厅预约系统</div>
-          <div className="text-xs text-muted-foreground mt-1">系统版本_V.1.0.0</div>
-        </div>
-
-        <nav className="p-4 space-y-2">
-          {navItems.map((item) => {
-            const isActive = location === item.href;
-            return (
-              <Link key={item.href} href={item.href}>
-                <div className={cn(
-                  "flex items-center gap-3 px-4 py-3 border-2 transition-all cursor-pointer font-bold text-sm",
-                  isActive 
-                    ? "bg-accent text-accent-foreground border-border shadow-[4px_4px_0px_0px_var(--color-border)] translate-x-[-2px] translate-y-[-2px]" 
-                    : "bg-transparent border-transparent hover:bg-muted hover:border-border hover:shadow-[2px_2px_0px_0px_var(--color-border)]"
-                )}>
-                  <item.icon className="w-5 h-5" />
-                  {item.label}
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      {/* Top Header with Hamburger Menu */}
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+        <h1 className="text-xl font-bold text-gray-900">餐厅预约系统</h1>
+        
+        {/* Hamburger Menu */}
+        <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="icon" className="rounded-lg">
+              <Menu className="w-6 h-6" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="right" className="w-64">
+            <SheetHeader>
+              <SheetTitle>メニュー</SheetTitle>
+            </SheetHeader>
+            <nav className="mt-6 space-y-2">
+              {navItems.map((item) => {
+                const isActive = location === item.href;
+                return (
+                  <Link key={item.href} href={item.href}>
+                    <div 
+                      className={cn(
+                        "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors cursor-pointer",
+                        isActive 
+                          ? "bg-orange-50 text-orange-600 font-medium" 
+                          : "text-gray-700 hover:bg-gray-100"
+                      )}
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <item.icon className="w-5 h-5" />
+                      {item.label}
+                    </div>
+                  </Link>
+                );
+              })}
+            </nav>
+            
+            {/* User Info */}
+            <div className="absolute bottom-6 left-4 right-4">
+              <div className="flex items-center gap-3 px-4 py-3 bg-gray-100 rounded-lg">
+                <div className="w-10 h-10 bg-blue-500 text-white flex items-center justify-center font-bold rounded-full">
+                  A
                 </div>
-              </Link>
-            );
-          })}
-        </nav>
-
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t-2 border-border bg-sidebar">
-          <div className="flex items-center gap-3 px-4 py-3 border-2 border-border bg-card">
-            <div className="w-8 h-8 bg-primary text-primary-foreground flex items-center justify-center font-bold border border-border">
-              A
+                <div>
+                  <div className="font-medium text-sm">管理员</div>
+                  <div className="text-xs text-gray-500">在线</div>
+                </div>
+              </div>
             </div>
-            <div className="overflow-hidden">
-              <div className="font-bold text-sm truncate">管理员</div>
-              <div className="text-xs text-muted-foreground truncate">在线</div>
-            </div>
-          </div>
-        </div>
-      </aside>
+          </SheetContent>
+        </Sheet>
+      </header>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto bg-background p-4 md:p-8">
-        <div className="max-w-6xl mx-auto">
-          {children}
-        </div>
+      {/* Full Width Main Content */}
+      <main className="flex-1 overflow-y-auto">
+        {children}
       </main>
-
-      {/* Overlay for mobile */}
-      {isMobileMenuOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-30 md:hidden"
-          onClick={() => setIsMobileMenuOpen(false)}
-        />
-      )}
     </div>
   );
 }
