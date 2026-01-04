@@ -33,7 +33,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Top Header with Hamburger Menu */}
       <header className="sticky top-0 z-50 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
-        <h1 className="text-xl font-bold text-gray-900">餐厅预约系统</h1>
+        <h1 className="text-xl font-bold text-gray-900">预约系统</h1>
         
         {/* Hamburger Menu */}
         <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>

@@ -338,11 +338,11 @@ export default function ReservationsTableView() {
         {/* 标签页切换 */}
         <div className="flex items-center gap-8 border-b border-gray-200">
           <button className="relative pb-3 text-orange-500 font-medium">
-            タイムスケジュール
+            时间表
             <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-orange-500"></div>
           </button>
           <button className="pb-3 text-gray-500 font-medium hover:text-gray-700">
-            リスト
+            列表
           </button>
         </div>
       </div>
@@ -353,7 +353,7 @@ export default function ReservationsTableView() {
           {/* 时间轴（顶部） */}
           <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
             <div className="grid" style={{ gridTemplateColumns: `${TABLE_COLUMN_WIDTH}px repeat(${timeSlots.length}, minmax(${TIME_SLOT_WIDTH}px, 1fr))` }}>
-              <div className="border-r border-gray-200 p-3 font-medium bg-white text-center text-sm text-gray-600">
+              <div className="border-r border-gray-200 p-3 font-medium bg-white text-center text-sm text-gray-600" style={{paddingTop: '10px', paddingRight: '0px', paddingBottom: '0px', paddingLeft: '0px'}}>
                 桌号
               </div>
               {timeSlots.map((time) => (
@@ -382,9 +382,9 @@ export default function ReservationsTableView() {
                   minHeight: "50px"
                 }}>
                   {/* 桌号列 */}
-                  <div className="border-r border-gray-200 p-3 bg-white sticky left-0 z-5 flex flex-col justify-center">
-                    <div className="font-bold text-base">{table.tableNumber}号桌</div>
-                    <div className="text-xs text-gray-500">{table.capacity}人</div>
+                  <div className="border-r border-gray-200 p-3 bg-white sticky left-0 z-5 flex flex-col justify-center" style={{paddingTop: '0px', paddingRight: '0px'}}>
+                    <div className="font-bold text-base" style={{fontSize: '12px', paddingTop: '13px', width: '35px', height: '36px', fontWeight: '800'}}>{table.tableNumber}号桌</div>
+                    <div className="text-xs text-gray-500" style={{fontSize: '11px', marginTop: '-10px', marginLeft: '7px', width: '35px', height: '12px', paddingTop: '4px'}}>{table.capacity}人</div>
                   </div>
 
                   {/* 时间槽 */}
@@ -430,8 +430,8 @@ export default function ReservationsTableView() {
                               handleReservationClick(reservation);
                             }}
                           >
-                            <div className="text-sm font-bold text-gray-800 truncate">{reservation.customerName}</div>
-                            <div className="text-xs text-gray-700 mt-0.5">{reservation.partySize}人</div>
+                            <div className="text-sm font-bold text-gray-800 truncate" style={{marginTop: '-9px', marginBottom: '-6px', marginLeft: '3px', display: 'grid', width: '280px', borderStyle: 'dashed'}}>{reservation.customerName}</div>
+                            <div className="text-xs text-gray-700 mt-0.5" style={{fontSize: '14px', marginTop: '-6px'}}>{reservation.partySize}人</div>
                           </div>
                         </TooltipTrigger>
                         <TooltipContent className="max-w-xs">
