@@ -126,3 +126,9 @@
 ## 调整桌号列宽度
 - [x] 修改 TABLE_COLUMN_WIDTH 从 40px 改为 30px
 - [x] 测试显示效果
+
+## 修改ReservationsTableView使用配置变量
+- [x] 导入 TABLE_COLUMN_WIDTH 配置变量
+- [x] 替换所有硬编码的桌号列宽度
+- [x] 确保桌号列固定不滚动
+- [x] 测试显示效果

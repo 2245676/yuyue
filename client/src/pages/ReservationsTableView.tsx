@@ -3,6 +3,7 @@ import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { TABLE_COLUMN_WIDTH } from "@/config/layoutConfig";
 import {
   Dialog,
   DialogContent,
@@ -351,7 +352,7 @@ export default function ReservationsTableView() {
         <div className="min-w-max">
           {/* 时间轴（顶部） */}
           <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
-            <div className="grid" style={{ gridTemplateColumns: `100px repeat(${timeSlots.length}, minmax(100px, 1fr))` }}>
+            <div className="grid" style={{ gridTemplateColumns: `${TABLE_COLUMN_WIDTH}px repeat(${timeSlots.length}, minmax(100px, 1fr))` }}>
               <div className="border-r border-gray-200 p-3 font-medium bg-white text-center text-sm text-gray-600">
                 桌号
               </div>
@@ -377,7 +378,7 @@ export default function ReservationsTableView() {
                 style={{ minHeight: "80px" }}
               >
                 <div className="grid relative" style={{ 
-                  gridTemplateColumns: `100px repeat(${timeSlots.length}, minmax(100px, 1fr))`,
+                  gridTemplateColumns: `${TABLE_COLUMN_WIDTH}px repeat(${timeSlots.length}, minmax(100px, 1fr))`,
                   minHeight: "80px"
                 }}>
                   {/* 桌号列 */}
@@ -417,7 +418,7 @@ export default function ReservationsTableView() {
                           <div
                             className="absolute bg-gradient-to-r from-orange-400 to-orange-300 rounded-xl p-3 cursor-pointer hover:shadow-lg transition-all"
                             style={{
-                              left: `calc(100px + ${slotIndex * (100 / timeSlots.length)}%)`,
+                              left: `calc(${TABLE_COLUMN_WIDTH}px + ${slotIndex * (100 / timeSlots.length)}%)`,
                               width: `calc(${slotsSpanned * (100 / timeSlots.length)}% - 8px)`,
                               top: "8px",
                               height: "calc(100% - 16px)",
