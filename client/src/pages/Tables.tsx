@@ -32,9 +32,11 @@ export default function Tables() {
       toast.success("桌位创建成功");
     },
     onError: (error) => {
-      // 优化错误提示，不显示原始SQL错误
       const message = error.message;
-      if (message.includes("Failed query") || message.includes("SQL")) {
+      // 特别处理重复桌号的情况
+      if (message.includes("Duplicate entry") || message.includes("tables_tableNumber_unique")) {
+        toast.error("该桌号已存在，请使用其他桌号");
+      } else if (message.includes("Failed query") || message.includes("SQL")) {
         toast.error("创建失败，请稍后重试");
         console.error("[Table Create Error]", error);
       } else {
@@ -51,9 +53,11 @@ export default function Tables() {
       toast.success("桌位更新成功");
     },
     onError: (error) => {
-      // 优化错误提示，不显示原始SQL错误
       const message = error.message;
-      if (message.includes("Failed query") || message.includes("SQL")) {
+      // 特别处理重复桌号的情况
+      if (message.includes("Duplicate entry") || message.includes("tables_tableNumber_unique")) {
+        toast.error("该桌号已被其他桌位使用，请使用其他桌号");
+      } else if (message.includes("Failed query") || message.includes("SQL")) {
         toast.error("更新失败，请稍后重试");
         console.error("[Table Update Error]", error);
       } else {
