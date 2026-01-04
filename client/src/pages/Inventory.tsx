@@ -3,12 +3,10 @@ import { trpc } from "@/lib/trpc";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Search, Plus, ChevronDown, ChevronUp, Home } from "lucide-react";
+import { Search, Plus, ChevronDown, ChevronUp } from "lucide-react";
 import { toast } from "sonner";
-import { useLocation } from "wouter";
 
 export default function Inventory() {
-  const [, setLocation] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
   const [savingItems, setSavingItems] = useState<Set<number>>(new Set());
@@ -103,14 +101,8 @@ export default function Inventory() {
                 className="pl-10 h-12 text-base"
               />
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setLocation("/")}
-              className="h-12 px-4 gap-2"
-            >
-              <Home className="w-4 h-4" />
-              首页
+            <Button variant="outline" size="icon" className="h-12 w-12">
+              <Plus className="w-5 h-5" />
             </Button>
           </div>
         </div>

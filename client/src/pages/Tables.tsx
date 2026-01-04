@@ -14,15 +14,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Edit, Trash2, Users, Home } from "lucide-react";
+import { Plus, Edit, Trash2, Users } from "lucide-react";
 import { toast } from "sonner";
-import { useLocation } from "wouter";
 
 export default function Tables() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingTable, setEditingTable] = useState<any>(null);
-  const [, setLocation] = useLocation();
 
   const utils = trpc.useUtils();
   const { data: tables, isLoading } = trpc.table.listActive.useQuery();
@@ -149,17 +147,7 @@ export default function Tables() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b-2 border-border pb-6">
-        <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setLocation("/")}
-            className="gap-2"
-          >
-            <Home className="h-4 w-4" />
-            首页
-          </Button>
-          <div className="h-6 w-px bg-border" />
+        <div>
           <h1 className="text-4xl font-black tracking-tighter uppercase">桌位管理</h1>
           <p className="text-muted-foreground font-mono mt-2">管理餐厅的所有桌位信息</p>
         </div>
