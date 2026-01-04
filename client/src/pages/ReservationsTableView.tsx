@@ -21,11 +21,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar, Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar as CalendarIcon, Plus, ChevronLeft, ChevronRight, Clock, Users, CheckCircle2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { format, addDays, subDays, parseISO, startOfDay, endOfDay } from "date-fns";
 import { zhCN } from "date-fns/locale";
 import { logger } from "@/lib/logger";
+import { TABLE_COLUMN_WIDTH, TIME_SLOT_WIDTH } from "@/config/layoutConfig";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 
 export default function ReservationsTableView() {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -36,6 +39,16 @@ export default function ReservationsTableView() {
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [lastClickTime, setLastClickTime] = useState<number>(0);
   const [lastClickCell, setLastClickCell] = useState<string>("");
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  // 更新当前时间（每分钟）
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000); // 每60秒更新一次
+    return () => clearInterval(timer);
+  }, []);
 
   const utils = trpc.useUtils();
   
@@ -291,90 +304,130 @@ export default function ReservationsTableView() {
   return (
     <div className="h-screen flex flex-col bg-gray-50">
       {/* 顶部导航栏 */}
-      <div className="flex-none bg-white p-4 pb-0">
-        {/* 日期横条（包含日期切换、统计信息、操作按钮） */}
-        <div className="flex items-center justify-between gap-4 mb-4">
-          {/* 左侧：圆角日期导航 */}
-          <div className="flex items-center gap-3 bg-gray-100 rounded-full px-4 py-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setSelectedDate(subDays(selectedDate, 1))}
-              className="h-8 w-8 rounded-full hover:bg-gray-200"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
-            
-            <span className="text-base font-bold px-2">
-              {format(selectedDate, "M月d日", { locale: zhCN })}
-              <span className="ml-1 text-sm font-normal text-gray-600">
-                ({format(selectedDate, "E", { locale: zhCN })})
-              </span>
-            </span>
-
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setSelectedDate(addDays(selectedDate, 1))}
-              className="h-8 w-8 rounded-full hover:bg-gray-200"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </Button>
-          </div>
-
-          {/* 中间：统计信息（紧凑版） */}
-          <div className="flex items-center gap-2 flex-1 justify-center">
-            <div className="flex items-center gap-2 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg px-3 py-1.5 border border-blue-200">
-              <span className="text-xs text-blue-600 font-medium">总预约</span>
-              <span className="text-lg font-bold text-blue-700">
-                {reservations?.filter(r => {
-                  const resDate = typeof r.reservationTime === 'string' 
-                    ? parseISO(r.reservationTime) 
-                    : r.reservationTime;
-                  return format(resDate, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd');
-                }).length || 0}
-              </span>
-            </div>
-            
-            <div className="flex items-center gap-2 bg-gradient-to-br from-green-50 to-green-100 rounded-lg px-3 py-1.5 border border-green-200">
-              <span className="text-xs text-green-600 font-medium">已到店</span>
-              <span className="text-lg font-bold text-green-700">
-                {reservations?.filter(r => {
-                  const resDate = typeof r.reservationTime === 'string' 
-                    ? parseISO(r.reservationTime) 
-                    : r.reservationTime;
-                  return format(resDate, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd') && r.status === 'completed';
-                }).length || 0}
-              </span>
-            </div>
-            
-            <div className="flex items-center gap-2 bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg px-3 py-1.5 border border-orange-200">
-              <span className="text-xs text-orange-600 font-medium">未到店</span>
-              <span className="text-lg font-bold text-orange-700">
-                {reservations?.filter(r => {
-                  const resDate = typeof r.reservationTime === 'string' 
-                    ? parseISO(r.reservationTime) 
-                    : r.reservationTime;
-                  return format(resDate, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd') && ['pending', 'confirmed'].includes(r.status);
-                }).length || 0}
-              </span>
-            </div>
-          </div>
-
-          {/* 右侧：操作按钮 */}
-          <div className="flex items-center gap-2">
-            <Button
-              onClick={() => setIsCreateDialogOpen(true)}
-              size="icon"
-              variant="ghost"
-              className="h-10 w-10 rounded-full hover:bg-gray-100"
-            >
-              <Plus className="h-6 w-6" />
-            </Button>
-          </div>
+      <div className="flex-none bg-white border-b border-gray-200">
+        {/* 第一行：标题 */}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+          <h1 className="text-lg font-bold text-gray-800">餐厅预约系统</h1>
+          <Button
+            onClick={() => setIsCreateDialogOpen(true)}
+            size="sm"
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            <Plus className="h-4 w-4 mr-1" />
+            新建预约
+          </Button>
         </div>
 
+        {/* 第二行：日期切换 + 当前时间 + 统计信息 */}
+        <div className="flex items-center gap-4 px-4 py-3">
+          {/* 左侧：日期切换和当前时间 */}
+          <div className="flex items-center gap-4">
+            {/* 日期切换 */}
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setSelectedDate(subDays(selectedDate, 1))}
+                className="h-8 w-8"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              
+              <Popover open={isDatePickerOpen} onOpenChange={setIsDatePickerOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="h-8 px-3 font-semibold hover:bg-gray-50"
+                  >
+                    <CalendarIcon className="h-4 w-4 mr-2" />
+                    {format(selectedDate, "M月d日", { locale: zhCN })}
+                    <span className="ml-1 text-xs font-normal text-gray-500">
+                      ({format(selectedDate, "EEEE", { locale: zhCN })})
+                    </span>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={(date) => {
+                      if (date) {
+                        setSelectedDate(date);
+                        setIsDatePickerOpen(false);
+                      }
+                    }}
+                    locale={zhCN}
+                  />
+                </PopoverContent>
+              </Popover>
 
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setSelectedDate(addDays(selectedDate, 1))}
+                className="h-8 w-8"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+
+            {/* 当前时间 */}
+            <div className="flex items-center gap-2 px-3 py-1 bg-gray-50 rounded-md border border-gray-200">
+              <Clock className="h-4 w-4 text-gray-500" />
+              <span className="text-sm font-medium text-gray-700">
+                {format(currentTime, "HH:mm")}
+              </span>
+            </div>
+          </div>
+
+          {/* 右侧：统计信息 */}
+          <div className="flex items-center gap-3 ml-auto">
+            <div className="flex items-center gap-2 px-3 py-2 bg-blue-50 rounded-lg border border-blue-200">
+              <Users className="h-4 w-4 text-blue-600" />
+              <div className="flex flex-col">
+                <span className="text-xs text-blue-600 font-medium">总预约</span>
+                <span className="text-xl font-bold text-blue-700">
+                  {reservations?.filter(r => {
+                    const resDate = typeof r.reservationTime === 'string' 
+                      ? parseISO(r.reservationTime) 
+                      : r.reservationTime;
+                    return format(resDate, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd');
+                  }).length || 0}
+                </span>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-2 px-3 py-2 bg-green-50 rounded-lg border border-green-200">
+              <CheckCircle2 className="h-4 w-4 text-green-600" />
+              <div className="flex flex-col">
+                <span className="text-xs text-green-600 font-medium">已到店</span>
+                <span className="text-xl font-bold text-green-700">
+                  {reservations?.filter(r => {
+                    const resDate = typeof r.reservationTime === 'string' 
+                      ? parseISO(r.reservationTime) 
+                      : r.reservationTime;
+                    return format(resDate, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd') && r.status === 'completed';
+                  }).length || 0}
+                </span>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-2 px-3 py-2 bg-orange-50 rounded-lg border border-orange-200">
+              <AlertCircle className="h-4 w-4 text-orange-600" />
+              <div className="flex flex-col">
+                <span className="text-xs text-orange-600 font-medium">未到店</span>
+                <span className="text-xl font-bold text-orange-700">
+                  {reservations?.filter(r => {
+                    const resDate = typeof r.reservationTime === 'string' 
+                      ? parseISO(r.reservationTime) 
+                      : r.reservationTime;
+                    return format(resDate, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd') && ['pending', 'confirmed'].includes(r.status);
+                  }).length || 0}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* 日历网格 */}
@@ -382,24 +435,25 @@ export default function ReservationsTableView() {
         <div className="min-w-max">
           {/* 时间轴（顶部） */}
           <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
-            <div className="grid" style={{ gridTemplateColumns: `100px repeat(${timeSlots.length}, minmax(100px, 1fr))` }}>
-              <div className="border-r border-gray-200 p-3 font-medium bg-white text-center text-sm text-gray-600">
+            <div className="grid" style={{ gridTemplateColumns: `${TABLE_COLUMN_WIDTH}px repeat(${timeSlots.length}, ${TIME_SLOT_WIDTH}px)` }}>
+              <div className="border-r-2 border-gray-400 p-2 font-bold bg-gray-100 text-center text-xs text-gray-800 sticky left-0 z-20">
                 桌号
               </div>
               {timeSlots.map((time) => {
                 // 判断是否为整点
                 const isFullHour = time.endsWith(':00');
                 const borderClass = isFullHour 
-                  ? 'border-r border-slate-300' 
-                  : 'border-r border-slate-200';
-                const borderOpacity = isFullHour ? 'border-opacity-60' : 'border-opacity-40';
+                  ? 'border-r-2 border-slate-400' 
+                  : 'border-r border-slate-300';
                 
                 return (
                   <div
                     key={time}
-                    className={`${borderClass} ${borderOpacity} p-2 text-center text-sm text-slate-700 font-medium`}
+                    className={`${borderClass} p-2 text-center bg-white border-b-2 border-gray-300`}
                   >
-                    {time}
+                    <div className="text-sm font-semibold text-slate-700">
+                      {time}
+                    </div>
                   </div>
                 );
               })}
@@ -417,13 +471,13 @@ export default function ReservationsTableView() {
                 style={{ minHeight: "80px" }}
               >
                 <div className="grid relative" style={{ 
-                  gridTemplateColumns: `100px repeat(${timeSlots.length}, minmax(100px, 1fr))`,
+                  gridTemplateColumns: `${TABLE_COLUMN_WIDTH}px repeat(${timeSlots.length}, ${TIME_SLOT_WIDTH}px)`,
                   minHeight: "80px"
                 }}>
                   {/* 桌号列 */}
-                  <div className="border-r border-gray-200 p-3 bg-white sticky left-0 z-5 flex flex-col justify-center">
-                    <div className="font-bold text-base">{table.tableNumber}号桌</div>
-                    <div className="text-xs text-gray-500">{table.capacity}人</div>
+                  <div className="border-r-2 border-gray-400 p-2 bg-gray-100 sticky left-0 z-20 flex flex-col justify-center">
+                    <div className="font-bold text-sm text-center">{table.tableNumber}</div>
+                    <div className="text-xs text-gray-500 text-center">{table.capacity}人</div>
                   </div>
 
                   {/* 时间槽 */}
@@ -440,10 +494,9 @@ export default function ReservationsTableView() {
                         } ${(() => {
                           const isFullHour = time.endsWith(':00');
                           const borderClass = isFullHour 
-                            ? 'border-r border-slate-300' 
-                            : 'border-r border-slate-200';
-                          const borderOpacity = isFullHour ? 'border-opacity-60' : 'border-opacity-40';
-                          return `${borderClass} ${borderOpacity}`;
+                            ? 'border-r-2 border-slate-400' 
+                            : 'border-r border-slate-300';
+                          return borderClass;
                         })()}`}
                         onClick={() => handleCellClick(table.id, time)}
                       />
@@ -476,7 +529,7 @@ export default function ReservationsTableView() {
                         <div
                           className="absolute top-0 bottom-0 w-px bg-blue-400 opacity-40 z-10 pointer-events-none"
                           style={{
-                            left: `calc(100px + ${percentage}%)`,
+                            left: `calc(${TABLE_COLUMN_WIDTH}px + ${percentage}%)`,
                           }}
                         />
                       );
@@ -529,8 +582,8 @@ export default function ReservationsTableView() {
                           <div
                             className={`absolute ${statusColor.bg} rounded-xl p-3 cursor-pointer hover:shadow-lg transition-all`}
                             style={{
-                              left: `calc(100px + ${slotIndex * (100 / timeSlots.length)}%)`,
-                              width: `calc(${slotsSpanned * (100 / timeSlots.length)}% - 8px)`,
+                              left: `calc(${TABLE_COLUMN_WIDTH}px + ${slotIndex * TIME_SLOT_WIDTH}px)`,
+                              width: `calc(${slotsSpanned * TIME_SLOT_WIDTH}px - 8px)`,
                               top: "8px",
                               height: "calc(100% - 16px)",
                               zIndex: 1,

@@ -7,11 +7,11 @@
 
 /**
  * 桌号列宽度（左侧固定列）
- * 默认: 40px
+ * 默认: 32px
  * 
  * 修改此变量可调整桌号列的宽度
  */
-export const TABLE_COLUMN_WIDTH = 40;
+export const TABLE_COLUMN_WIDTH = 32;
 
 /**
  * 时间格宽度（中间网格区域）

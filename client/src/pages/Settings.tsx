@@ -6,9 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Settings as SettingsIcon, Save } from "lucide-react";
+import { useLocation } from "wouter";
+import { Settings as SettingsIcon, Save, Home } from "lucide-react";
 
 export default function Settings() {
+  const [, setLocation] = useLocation();
   const { data: configs, isLoading } = trpc.config.getAll.useQuery();
   const utils = trpc.useUtils();
   
@@ -41,6 +43,16 @@ export default function Settings() {
   return (
     <div className="container py-8">
       <div className="flex items-center gap-3 mb-6">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setLocation("/")}
+          className="gap-2"
+        >
+          <Home className="h-4 w-4" />
+          首页
+        </Button>
+        <div className="h-6 w-px bg-border" />
         <SettingsIcon className="w-8 h-8" />
         <h1 className="text-3xl font-black">系统设置</h1>
       </div>
