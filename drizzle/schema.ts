@@ -31,8 +31,8 @@ export type InsertUser = typeof users.$inferInsert;
  */
 export const tables = mysqlTable("tables", {
   id: int("id").autoincrement().primaryKey(),
-  /** 桌号，例如：A1, B2, VIP1 */
-  tableNumber: varchar("tableNumber", { length: 50 }).notNull().unique(),
+  /** 桌号，存储数字，例如：1, 2, 3 */
+  tableNumber: int("tableNumber").notNull().unique(),
   /** 桌位容量（可容纳人数） */
   capacity: int("capacity").notNull(),
   /** 桌位区域，例如：大厅、包间、靠窗 */
@@ -101,3 +101,26 @@ export const systemConfig = mysqlTable("system_config", {
 
 export type SystemConfig = typeof systemConfig.$inferSelect;
 export type InsertSystemConfig = typeof systemConfig.$inferInsert;
+
+/**
+ * 库存管理表
+ * 用于快速录入和管理菜品/食材的剩余库存
+ */
+export const items = mysqlTable("items", {
+  id: int("id").autoincrement().primaryKey(),
+  /** 菜品/食材名称 */
+  name: varchar("name", { length: 100 }).notNull(),
+  /** 分类，例如：主菜、小菜、饮料、食材 */
+  category: varchar("category", { length: 50 }).notNull(),
+  /** 渠道/超市，例如：永辉、盒马、山姆 */
+  vendor: varchar("vendor", { length: 100 }),
+  /** 单位，例如：份、kg、瓶 */
+  unit: varchar("unit", { length: 20 }).notNull().default("份"),
+  /** 剩余库存数量 */
+  stockRemaining: int("stockRemaining").notNull().default(0),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Item = typeof items.$inferSelect;
+export type InsertItem = typeof items.$inferInsert;

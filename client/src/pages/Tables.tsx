@@ -32,7 +32,14 @@ export default function Tables() {
       toast.success("桌位创建成功");
     },
     onError: (error) => {
-      toast.error(`创建失败: ${error.message}`);
+      // 优化错误提示，不显示原始SQL错误
+      const message = error.message;
+      if (message.includes("Failed query") || message.includes("SQL")) {
+        toast.error("创建失败，请稍后重试");
+        console.error("[Table Create Error]", error);
+      } else {
+        toast.error(message);
+      }
     },
   });
 
@@ -44,7 +51,14 @@ export default function Tables() {
       toast.success("桌位更新成功");
     },
     onError: (error) => {
-      toast.error(`更新失败: ${error.message}`);
+      // 优化错误提示，不显示原始SQL错误
+      const message = error.message;
+      if (message.includes("Failed query") || message.includes("SQL")) {
+        toast.error("更新失败，请稍后重试");
+        console.error("[Table Update Error]", error);
+      } else {
+        toast.error(message);
+      }
     },
   });
 
@@ -62,12 +76,21 @@ export default function Tables() {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     
+    const tableNumberStr = formData.get("tableNumber") as string;
+    const tableNumber = Number(tableNumberStr);
+    
+    // 验证桌号必须为正整数
+    if (!tableNumberStr || isNaN(tableNumber) || tableNumber <= 0 || !Number.isInteger(tableNumber)) {
+      toast.error("桌号只能输入正整数，例如 3");
+      return;
+    }
+    
     const area = formData.get("area") as string;
     const type = formData.get("type") as string;
     const notes = formData.get("notes") as string;
     
     createMutation.mutate({
-      tableNumber: formData.get("tableNumber") as string,
+      tableNumber: tableNumber,
       capacity: parseInt(formData.get("capacity") as string),
       ...(area && { area }),
       ...(type && { type }),
@@ -79,13 +102,22 @@ export default function Tables() {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     
+    const tableNumberStr = formData.get("tableNumber") as string;
+    const tableNumber = Number(tableNumberStr);
+    
+    // 验证桌号必须为正整数
+    if (!tableNumberStr || isNaN(tableNumber) || tableNumber <= 0 || !Number.isInteger(tableNumber)) {
+      toast.error("桌号只能输入正整数，例如 3");
+      return;
+    }
+    
     const area = formData.get("area") as string;
     const type = formData.get("type") as string;
     const notes = formData.get("notes") as string;
     
     updateMutation.mutate({
       id: editingTable.id,
-      tableNumber: formData.get("tableNumber") as string,
+      tableNumber: tableNumber,
       capacity: parseInt(formData.get("capacity") as string),
       ...(area && { area }),
       ...(type && { type }),
@@ -136,7 +168,12 @@ export default function Tables() {
                   <Input
                     id="tableNumber"
                     name="tableNumber"
-                    placeholder="例如: A1, B2, VIP1"
+                    type="number"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    min="1"
+                    step="1"
+                    placeholder="例如: 3"
                     required
                     className="rounded-none border-2"
                   />
@@ -197,7 +234,7 @@ export default function Tables() {
           <Card key={table.id} className="neo-box rounded-none">
             <CardHeader className="border-b-2 border-border pb-4">
               <CardTitle className="font-black text-xl flex items-center justify-between">
-                <span>{table.tableNumber}</span>
+                <span>{table.tableNumber}号桌</span>
                 <div className="flex items-center gap-2 text-sm font-mono">
                   <Users className="w-4 h-4" />
                   {table.capacity}人

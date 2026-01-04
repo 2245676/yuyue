@@ -46,7 +46,7 @@ describe("table management", () => {
     const { ctx } = createAuthContext();
     const caller = appRouter.createCaller(ctx);
 
-    const tableNumber = `TEST-${Date.now()}`;
+    const tableNumber = Math.floor(Math.random() * 10000) + 3000;
     
     const result = await caller.table.create({
       tableNumber,
@@ -71,7 +71,7 @@ describe("table management", () => {
     const caller = appRouter.createCaller(ctx);
 
     // 先创建一个桌位
-    const tableNumber = `UPDATE-TEST-${Date.now()}`;
+    const tableNumber = Math.floor(Math.random() * 10000) + 4000;
     await caller.table.create({
       tableNumber,
       capacity: 4,
@@ -104,7 +104,7 @@ describe("table management", () => {
     const caller = appRouter.createCaller(ctx);
 
     // 先创建一个桌位
-    const tableNumber = `DELETE-TEST-${Date.now()}`;
+    const tableNumber = Math.floor(Math.random() * 10000) + 5000;
     await caller.table.create({
       tableNumber,
       capacity: 4,
@@ -136,14 +136,14 @@ describe("table management", () => {
     const caller = appRouter.createCaller(ctx);
 
     // 创建一个活跃桌位
-    const activeTableNumber = `ACTIVE-${Date.now()}`;
+    const activeTableNumber = Math.floor(Math.random() * 10000) + 1000;
     await caller.table.create({
       tableNumber: activeTableNumber,
       capacity: 4,
     });
 
     // 创建一个桌位并删除它
-    const inactiveTableNumber = `INACTIVE-${Date.now()}`;
+    const inactiveTableNumber = Math.floor(Math.random() * 10000) + 2000;
     await caller.table.create({
       tableNumber: inactiveTableNumber,
       capacity: 4,

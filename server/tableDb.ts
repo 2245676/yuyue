@@ -40,25 +40,38 @@ export async function createTable(table: InsertTable) {
     throw new Error("Database not available");
   }
 
-  // 记录详细的输入参数
   console.log("[Database] Creating table with params:", JSON.stringify(table, null, 2));
-  console.log("[Database] Param types:", {
-    tableNumber: typeof table.tableNumber,
-    capacity: typeof table.capacity,
-    area: typeof table.area,
-    type: typeof table.type,
-  });
 
   // 确保 capacity 是数字类型
-  const validatedTable = {
-    ...table,
-    capacity: typeof table.capacity === 'string' ? parseInt(table.capacity) : table.capacity,
+  const capacity = typeof table.capacity === 'string' ? parseInt(table.capacity) : table.capacity;
+  
+  // 构建插入数据，只包含非 undefined 的字段
+  const insertData: any = {
+    tableNumber: table.tableNumber,
+    capacity: capacity,
   };
+  
+  // 添加可选字段
+  if (table.area !== undefined && table.area !== null && table.area !== '') {
+    insertData.area = table.area;
+  }
+  if (table.type !== undefined && table.type !== null && table.type !== '') {
+    insertData.type = table.type;
+  }
+  if (table.notes !== undefined && table.notes !== null && table.notes !== '') {
+    insertData.notes = table.notes;
+  }
 
-  console.log("[Database] Validated table:", JSON.stringify(validatedTable, null, 2));
+  console.log("[Database] Insert data:", JSON.stringify(insertData, null, 2));
 
-  const result = await db.insert(tables).values(validatedTable);
-  return result;
+  try {
+    const result = await db.insert(tables).values(insertData);
+    console.log("[Database] Table created successfully");
+    return result;
+  } catch (error) {
+    console.error("[Database] Insert error:", error);
+    throw error;
+  }
 }
 
 /**

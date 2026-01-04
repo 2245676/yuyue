@@ -1,0 +1,27 @@
+{
+  "query": "SHOW CREATE TABLE tables",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3rQpQGVk21knunY.e230ea61e9f0 --database cNs5uZG3ePbHucSLXQVo2f --execute SHOW CREATE TABLE tables",
+  "rows": [
+    {
+      "Table": "tables",
+      "Create Table": "CREATE TABLE `tables` ("
+    }
+  ],
+  "messages": [
+    "  `id` int(11) NOT NULL AUTO_INCREMENT,",
+    "  `tableNumber` int(11) NOT NULL,",
+    "  `capacity` int(11) NOT NULL,",
+    "  `area` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `type` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `isActive` int(11) NOT NULL DEFAULT '1',",
+    "  `notes` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,",
+    "  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,",
+    "  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */,",
+    "  UNIQUE KEY `tables_tableNumber_unique` (`tableNumber`)",
+    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+  ],
+  "stdout": "Table\tCreate Table\ntables\tCREATE TABLE `tables` (\n  `id` int(11) NOT NULL AUTO_INCREMENT,\n  `tableNumber` int(11) NOT NULL,\n  `capacity` int(11) NOT NULL,\n  `area` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `type` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `isActive` int(11) NOT NULL DEFAULT '1',\n  `notes` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */,\n  UNIQUE KEY `tables_tableNumber_unique` (`tableNumber`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci\n",
+  "stderr": "",
+  "execution_time_ms": 1533
+}

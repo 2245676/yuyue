@@ -1,0 +1,8 @@
+{
+  "query": "ALTER TABLE tables MODIFY COLUMN tableNumber int NOT NULL UNIQUE",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3rQpQGVk21knunY.e230ea61e9f0 --database cNs5uZG3ePbHucSLXQVo2f --execute ALTER TABLE tables MODIFY COLUMN tableNumber int NOT NULL UNIQUE",
+  "returncode": 1,
+  "logs": [
+    "ERROR 8200 (HY000) at line 1: can't change column constraint (UNIQUE KEY)"
+  ]
+}

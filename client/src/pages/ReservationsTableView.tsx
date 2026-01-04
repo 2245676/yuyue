@@ -382,7 +382,7 @@ export default function ReservationsTableView() {
                 }}>
                   {/* 桌号列 */}
                   <div className="border-r border-gray-200 p-3 bg-white sticky left-0 z-5 flex flex-col justify-center">
-                    <div className="font-bold text-base">{table.tableNumber}</div>
+                    <div className="font-bold text-base">{table.tableNumber}号桌</div>
                     <div className="text-xs text-gray-500">{table.capacity}人</div>
                   </div>
 
@@ -439,7 +439,7 @@ export default function ReservationsTableView() {
                             <div className="grid grid-cols-2 gap-2 text-sm">
                               <div>
                                 <span className="text-muted-foreground">桌号：</span>
-                                <span className="font-medium">{tables.find(t => t.id === reservation.tableId)?.tableNumber}</span>
+                                <span className="font-medium">{tables.find(t => t.id === reservation.tableId)?.tableNumber}号桌</span>
                               </div>
                               <div>
                                 <span className="text-muted-foreground">人数：</span>
@@ -507,7 +507,7 @@ export default function ReservationsTableView() {
                   <SelectContent>
                     {tables?.map((table) => (
                       <SelectItem key={table.id} value={table.id.toString()}>
-                        {table.tableNumber} ({table.capacity}人)
+                        {table.tableNumber}号桌 ({table.capacity}人)
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -641,7 +641,7 @@ export default function ReservationsTableView() {
                     <SelectContent>
                       {tables?.map((table) => (
                         <SelectItem key={table.id} value={table.id.toString()}>
-                          {table.tableNumber} ({table.capacity}人)
+                          {table.tableNumber}号桌 ({table.capacity}人)
                         </SelectItem>
                       ))}
                     </SelectContent>

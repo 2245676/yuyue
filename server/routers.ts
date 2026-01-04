@@ -6,6 +6,7 @@ import { z } from "zod";
 import * as tableDb from "./tableDb";
 import * as reservationDb from "./reservationDb";
 import * as configDb from "./configDb";
+import * as itemDb from "./itemDb";
 import { logger } from "./logger";
 
 export const appRouter = router({
@@ -45,16 +46,34 @@ export const appRouter = router({
     create: protectedProcedure
       .input(
         z.object({
-          tableNumber: z.string().min(1).max(50),
+          tableNumber: z.number().int().positive(),
           capacity: z.number().int().positive(),
           area: z.string().max(100).optional(),
           type: z.string().max(50).optional(),
           notes: z.string().optional(),
         })
       )
-      .mutation(async ({ input }) => {
-        await tableDb.createTable(input);
-        return { success: true };
+      .mutation(async ({ input, ctx }) => {
+        try {
+          // 后端防御性校验
+          if (!Number.isInteger(input.tableNumber) || input.tableNumber <= 0) {
+            throw new Error("桌号必须为正整数");
+          }
+          
+          console.log("[Table Create] Received input:", JSON.stringify(input, null, 2));
+          
+          await tableDb.createTable(input);
+          console.log("[Table Create] Success");
+          return { success: true };
+        } catch (error) {
+          console.error("[Table Create] Error:", {
+            name: error instanceof Error ? error.name : "Unknown",
+            message: error instanceof Error ? error.message : String(error),
+            stack: error instanceof Error ? error.stack : undefined,
+            input: input,
+          });
+          throw error;
+        }
       }),
     
     // 更新桌位
@@ -62,7 +81,7 @@ export const appRouter = router({
       .input(
         z.object({
           id: z.number(),
-          tableNumber: z.string().min(1).max(50).optional(),
+          tableNumber: z.number().int().positive().optional(),
           capacity: z.number().int().positive().optional(),
           area: z.string().max(100).optional(),
           type: z.string().max(50).optional(),
@@ -71,6 +90,11 @@ export const appRouter = router({
         })
       )
       .mutation(async ({ input }) => {
+        // 后端防御性校验
+        if (input.tableNumber !== undefined && (!Number.isInteger(input.tableNumber) || input.tableNumber <= 0)) {
+          throw new Error("桌号必须为正整数");
+        }
+        
         const { id, ...data } = input;
         await tableDb.updateTable(id, data);
         return { success: true };
@@ -269,6 +293,81 @@ export const appRouter = router({
       await configDb.initDefaultConfigs();
       return { success: true };
     }),
+  }),
+
+  // 库存管理路由
+  item: router({
+    // 获取所有库存项目
+    list: protectedProcedure.query(async () => {
+      return await itemDb.getAllItems();
+    }),
+    
+    // 根据ID获取库存项目
+    getById: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        return await itemDb.getItemById(input.id);
+      }),
+    
+    // 创建新库存项目
+    create: protectedProcedure
+      .input(
+        z.object({
+          name: z.string().min(1).max(100),
+          category: z.string().min(1).max(50),
+          vendor: z.string().max(100).optional(),
+          unit: z.string().max(20).default("份"),
+          stockRemaining: z.number().int().min(0).default(0),
+        })
+      )
+      .mutation(async ({ input }) => {
+        await itemDb.createItem(input);
+        return { success: true };
+      }),
+    
+    // 更新库存项目
+    update: protectedProcedure
+      .input(
+        z.object({
+          id: z.number(),
+          name: z.string().min(1).max(100).optional(),
+          category: z.string().min(1).max(50).optional(),
+          vendor: z.string().max(100).optional(),
+          unit: z.string().max(20).optional(),
+          stockRemaining: z.number().int().min(0).optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        await itemDb.updateItem(id, data);
+        return { success: true };
+      }),
+    
+    // 更新库存剩余数量
+    updateStock: protectedProcedure
+      .input(
+        z.object({
+          id: z.number(),
+          stockRemaining: z.number().int().min(0),
+        })
+      )
+      .mutation(async ({ input }) => {
+        // 后端防御性校验
+        if (input.stockRemaining < 0) {
+          throw new Error("库存数量不能为负数");
+        }
+        
+        await itemDb.updateItemStock(input.id, input.stockRemaining);
+        return { success: true };
+      }),
+    
+    // 删除库存项目
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await itemDb.deleteItem(input.id);
+        return { success: true };
+      }),
   }),
 });
 

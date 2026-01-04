@@ -8,12 +8,12 @@ describe("Reservation Management", () => {
   let testReservationId: number;
 
   beforeAll(async () => {
-    // 创建测试桌位（使用时间戳确保唯一性）
-    const uniqueTableNumber = `TEST-R-${Date.now()}`;
+    // 创建测试桌位（使用随机数字确保唯一性）
+    const uniqueTableNumber = Math.floor(Math.random() * 10000) + 7000;
     await tableDb.createTable({
       tableNumber: uniqueTableNumber,
       capacity: 4,
-      location: "测试区",
+      area: "测试区",
       isActive: true,
     });
 
