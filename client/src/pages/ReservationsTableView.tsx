@@ -21,11 +21,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar, Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar as CalendarIcon, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { format, addDays, subDays, parseISO, startOfDay, endOfDay } from "date-fns";
 import { zhCN } from "date-fns/locale";
 import { logger } from "@/lib/logger";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 
 export default function ReservationsTableView() {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -36,6 +38,7 @@ export default function ReservationsTableView() {
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [lastClickTime, setLastClickTime] = useState<number>(0);
   const [lastClickCell, setLastClickCell] = useState<string>("");
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
   const utils = trpc.useUtils();
   
@@ -305,12 +308,33 @@ export default function ReservationsTableView() {
               <ChevronLeft className="h-5 w-5" />
             </Button>
             
-            <span className="text-base font-bold px-2">
-              {format(selectedDate, "M月d日", { locale: zhCN })}
-              <span className="ml-1 text-sm font-normal text-gray-600">
-                ({format(selectedDate, "E", { locale: zhCN })})
-              </span>
-            </span>
+            <Popover open={isDatePickerOpen} onOpenChange={setIsDatePickerOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="text-base font-bold px-2 hover:bg-gray-200 rounded-full"
+                >
+                  {format(selectedDate, "M月d日", { locale: zhCN })}
+                  <span className="ml-1 text-sm font-normal text-gray-600">
+                    ({format(selectedDate, "E", { locale: zhCN })})
+                  </span>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="center">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={(date) => {
+                    if (date) {
+                      setSelectedDate(date);
+                      setIsDatePickerOpen(false);
+                    }
+                  }}
+                  locale={zhCN}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
 
             <Button
               variant="ghost"
