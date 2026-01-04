@@ -386,14 +386,23 @@ export default function ReservationsTableView() {
               <div className="border-r border-gray-200 p-3 font-medium bg-white text-center text-sm text-gray-600">
                 桌号
               </div>
-              {timeSlots.map((time) => (
-                <div
-                  key={time}
-                  className="border-r border-gray-200 p-2 text-center font-medium text-sm text-gray-700"
-                >
-                  {time}
-                </div>
-              ))}
+              {timeSlots.map((time) => {
+                // 判断是否为整点
+                const isFullHour = time.endsWith(':00');
+                const borderClass = isFullHour 
+                  ? 'border-r border-slate-300' 
+                  : 'border-r border-slate-200';
+                const borderOpacity = isFullHour ? 'border-opacity-60' : 'border-opacity-40';
+                
+                return (
+                  <div
+                    key={time}
+                    className={`${borderClass} ${borderOpacity} p-2 text-center text-sm text-slate-700 font-medium`}
+                  >
+                    {time}
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -426,13 +435,54 @@ export default function ReservationsTableView() {
                     return (
                       <div
                         key={time}
-                        className={`border-r border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors ${
+                        className={`hover:bg-gray-50 cursor-pointer transition-colors ${
                           isNonBusinessHour ? "bg-gray-50" : "bg-white"
-                        }`}
+                        } ${(() => {
+                          const isFullHour = time.endsWith(':00');
+                          const borderClass = isFullHour 
+                            ? 'border-r border-slate-300' 
+                            : 'border-r border-slate-200';
+                          const borderOpacity = isFullHour ? 'border-opacity-60' : 'border-opacity-40';
+                          return `${borderClass} ${borderOpacity}`;
+                        })()}`}
                         onClick={() => handleCellClick(table.id, time)}
                       />
                     );
                   })}
+
+                  {/* 当前时间指示线 (Now Line) */}
+                  {(() => {
+                    const now = new Date();
+                    const currentHour = now.getHours();
+                    const currentMinute = now.getMinutes();
+                    
+                    // 计算当前时间在时间轴上的位置
+                    const startHour = parseInt(timeSlots[0].split(':')[0]);
+                    const startMinute = parseInt(timeSlots[0].split(':')[1]);
+                    const endHour = parseInt(timeSlots[timeSlots.length - 1].split(':')[0]);
+                    const endMinute = parseInt(timeSlots[timeSlots.length - 1].split(':')[1]);
+                    
+                    const currentTotalMinutes = currentHour * 60 + currentMinute;
+                    const startTotalMinutes = startHour * 60 + startMinute;
+                    const endTotalMinutes = endHour * 60 + endMinute;
+                    
+                    // 只在当前时间在时间轴范围内时显示
+                    if (currentTotalMinutes >= startTotalMinutes && currentTotalMinutes <= endTotalMinutes) {
+                      const totalDuration = endTotalMinutes - startTotalMinutes;
+                      const currentOffset = currentTotalMinutes - startTotalMinutes;
+                      const percentage = (currentOffset / totalDuration) * 100;
+                      
+                      return (
+                        <div
+                          className="absolute top-0 bottom-0 w-px bg-blue-400 opacity-40 z-10 pointer-events-none"
+                          style={{
+                            left: `calc(100px + ${percentage}%)`,
+                          }}
+                        />
+                      );
+                    }
+                    return null;
+                  })()}
 
                   {/* 预约卡片（绝对定位） */}
                   {tableReservations.map((reservation) => {
