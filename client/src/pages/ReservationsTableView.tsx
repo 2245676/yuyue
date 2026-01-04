@@ -55,11 +55,11 @@ export default function ReservationsTableView() {
     }
   }, [configs]);
 
-  // 从配置中获取参数
-  const businessStartTime = configs?.find(c => c.configKey === "business_start_time")?.configValue || "09:00";
-  const businessEndTime = configs?.find(c => c.configKey === "business_end_time")?.configValue || "23:00";
-  const timeSlotMinutes = parseInt(configs?.find(c => c.configKey === "time_slot_minutes")?.configValue || "30");
-  const bufferMinutes = parseInt(configs?.find(c => c.configKey === "buffer_time_minutes")?.configValue || "30");
+  // 从配置中获取参数（确保类型安全）
+  const businessStartTime = String(configs?.find(c => c.configKey === "business_start_time")?.configValue || "09:00");
+  const businessEndTime = String(configs?.find(c => c.configKey === "business_end_time")?.configValue || "23:00");
+  const timeSlotMinutes = parseInt(String(configs?.find(c => c.configKey === "time_slot_minutes")?.configValue || "30"));
+  const bufferMinutes = parseInt(String(configs?.find(c => c.configKey === "buffer_time_minutes")?.configValue || "30"));
 
   const createMutation = trpc.reservation.create.useMutation({
     onSuccess: () => {
