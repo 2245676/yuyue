@@ -326,17 +326,18 @@ export default function ReservationsTableView() {
           <div className="flex items-center gap-2">
             <Button
               onClick={() => setIsCreateDialogOpen(true)}
-              size="icon"
-              variant="ghost"
-              className="h-10 w-10 rounded-full hover:bg-gray-100"
+              size="sm"
+              className="flex items-center gap-2"
+              style={{color: '#ffffff', backgroundColor: '#0081f2', borderRadius: '11px', width: '63px', height: '34px', fontSize: '19px', fontWeight: '900', borderWidth: '1px'}}
             >
-              <Plus className="h-6 w-6" />
+              <Plus className="h-4 w-4" />
+              预约
             </Button>
           </div>
         </div>
 
         {/* 标签页切换 */}
-        <div className="flex items-center gap-8 border-b border-gray-200">
+        <div className="flex items-center gap-8 border-b border-gray-200" style={{marginTop: '1px', marginLeft: '-15px', width: '830px', height: '9px'}}>
           <button className="relative pb-3 text-orange-500 font-medium">
             时间表
             <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-orange-500"></div>
@@ -375,14 +376,14 @@ export default function ReservationsTableView() {
               <div
                 key={table.id}
                 className="border-b border-gray-200"
-                style={{ minHeight: "50px" }}
+                style={{ minHeight: "50px", marginTop: '1px' }}
               >
                 <div className="grid relative" style={{ 
                   gridTemplateColumns: `${TABLE_COLUMN_WIDTH}px repeat(${timeSlots.length}, minmax(${TIME_SLOT_WIDTH}px, 1fr))`,
                   minHeight: "50px"
                 }}>
                   {/* 桌号列 */}
-                  <div className="border-r border-gray-200 p-3 bg-white sticky left-0 z-5 flex flex-col justify-center" style={{paddingTop: '0px', paddingRight: '0px'}}>
+                  <div className="border-r border-gray-200 p-3 bg-white sticky left-0 z-5 flex flex-col justify-center" style={{paddingTop: '0px', paddingRight: '0px', paddingBottom: '18px', paddingLeft: '10px'}}>
                     <div className="font-bold text-base" style={{fontSize: '12px', paddingTop: '13px', width: '35px', height: '36px', fontWeight: '800'}}>{table.tableNumber}号桌</div>
                     <div className="text-xs text-gray-500" style={{fontSize: '11px', marginTop: '-10px', marginLeft: '7px', width: '35px', height: '12px', paddingTop: '4px'}}>{table.capacity}人</div>
                   </div>
@@ -419,11 +420,12 @@ export default function ReservationsTableView() {
                             className="absolute bg-gradient-to-r from-orange-400 to-orange-300 rounded-xl p-3 cursor-pointer hover:shadow-lg transition-all"
                             style={{
                               left: `calc(${TABLE_COLUMN_WIDTH}px + ${slotIndex * (100 / timeSlots.length)}%)`,
-                              width: `calc(${slotsSpanned * (100 / timeSlots.length)}% - 8px)`,
+                              width: '323px',
                               top: "8px",
                               height: "calc(100% - 16px)",
                               zIndex: 1,
                               boxShadow: "0 2px 8px rgba(255,152,0,0.2)",
+                              marginLeft: '-3px'
                             }}
                             onClick={(e) => {
                               e.stopPropagation();
