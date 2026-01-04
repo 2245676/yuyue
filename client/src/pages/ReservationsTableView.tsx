@@ -292,9 +292,9 @@ export default function ReservationsTableView() {
     <div className="h-screen flex flex-col bg-gray-50">
       {/* 顶部导航栏 */}
       <div className="flex-none bg-white p-4 pb-0">
-        {/* 日期选择器和操作按钮 */}
-        <div className="flex items-center justify-between mb-4">
-          {/* 圆角日期导航 */}
+        {/* 日期横条（包含日期切换、统计信息、操作按钮） */}
+        <div className="flex items-center justify-between gap-4 mb-4">
+          {/* 左侧：圆角日期导航 */}
           <div className="flex items-center gap-3 bg-gray-100 rounded-full px-4 py-2">
             <Button
               variant="ghost"
@@ -322,7 +322,46 @@ export default function ReservationsTableView() {
             </Button>
           </div>
 
-          {/* 右侧按钮 */}
+          {/* 中间：统计信息（紧凑版） */}
+          <div className="flex items-center gap-2 flex-1 justify-center">
+            <div className="flex items-center gap-2 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg px-3 py-1.5 border border-blue-200">
+              <span className="text-xs text-blue-600 font-medium">总预约</span>
+              <span className="text-lg font-bold text-blue-700">
+                {reservations?.filter(r => {
+                  const resDate = typeof r.reservationTime === 'string' 
+                    ? parseISO(r.reservationTime) 
+                    : r.reservationTime;
+                  return format(resDate, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd');
+                }).length || 0}
+              </span>
+            </div>
+            
+            <div className="flex items-center gap-2 bg-gradient-to-br from-green-50 to-green-100 rounded-lg px-3 py-1.5 border border-green-200">
+              <span className="text-xs text-green-600 font-medium">已到店</span>
+              <span className="text-lg font-bold text-green-700">
+                {reservations?.filter(r => {
+                  const resDate = typeof r.reservationTime === 'string' 
+                    ? parseISO(r.reservationTime) 
+                    : r.reservationTime;
+                  return format(resDate, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd') && r.status === 'completed';
+                }).length || 0}
+              </span>
+            </div>
+            
+            <div className="flex items-center gap-2 bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg px-3 py-1.5 border border-orange-200">
+              <span className="text-xs text-orange-600 font-medium">未到店</span>
+              <span className="text-lg font-bold text-orange-700">
+                {reservations?.filter(r => {
+                  const resDate = typeof r.reservationTime === 'string' 
+                    ? parseISO(r.reservationTime) 
+                    : r.reservationTime;
+                  return format(resDate, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd') && ['pending', 'confirmed'].includes(r.status);
+                }).length || 0}
+              </span>
+            </div>
+          </div>
+
+          {/* 右侧：操作按钮 */}
           <div className="flex items-center gap-2">
             <Button
               onClick={() => setIsCreateDialogOpen(true)}
@@ -335,59 +374,11 @@ export default function ReservationsTableView() {
           </div>
         </div>
 
-        {/* 当日预约统计面板 */}
-        <div className="grid grid-cols-3 gap-4 py-4">
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border-2 border-blue-200">
-            <div className="text-sm text-blue-600 font-medium mb-1">总预约数</div>
-            <div className="text-3xl font-bold text-blue-700">
-              {reservations?.filter(r => {
-                const resDate = typeof r.reservationTime === 'string' 
-                  ? parseISO(r.reservationTime) 
-                  : r.reservationTime;
-                return format(resDate, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd');
-              }).length || 0}
-            </div>
-          </div>
-          
-          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 border-2 border-green-200">
-            <div className="text-sm text-green-600 font-medium mb-1">已到店</div>
-            <div className="text-3xl font-bold text-green-700">
-              {reservations?.filter(r => {
-                const resDate = typeof r.reservationTime === 'string' 
-                  ? parseISO(r.reservationTime) 
-                  : r.reservationTime;
-                return format(resDate, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd') && r.status === 'completed';
-              }).length || 0}
-            </div>
-          </div>
-          
-          <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-4 border-2 border-orange-200">
-            <div className="text-sm text-orange-600 font-medium mb-1">未到店</div>
-            <div className="text-3xl font-bold text-orange-700">
-              {reservations?.filter(r => {
-                const resDate = typeof r.reservationTime === 'string' 
-                  ? parseISO(r.reservationTime) 
-                  : r.reservationTime;
-                return format(resDate, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd') && ['pending', 'confirmed'].includes(r.status);
-              }).length || 0}
-            </div>
-          </div>
-        </div>
 
-        {/* 标签页切换 */}
-        <div className="flex items-center gap-8 border-b border-gray-200">
-          <button className="relative pb-3 text-orange-500 font-medium">
-            タイムスケジュール
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-orange-500"></div>
-          </button>
-          <button className="pb-3 text-gray-500 font-medium hover:text-gray-700">
-            リスト
-          </button>
-        </div>
       </div>
 
       {/* 日历网格 */}
-      <div className="flex-1 overflow-auto pb-32">
+      <div className="flex-1 overflow-auto">
         <div className="min-w-max">
           {/* 时间轴（顶部） */}
           <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
@@ -894,52 +885,7 @@ export default function ReservationsTableView() {
         </DialogContent>
       </Dialog>
 
-      {/* 底部浮动按钮 */}
-      <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 z-20 hidden md:block">
-        <button className="bg-teal-500 hover:bg-teal-600 text-white font-medium px-6 py-3 rounded-full shadow-lg flex items-center gap-2 transition-all whitespace-nowrap">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-          关闭今日预约
-        </button>
-      </div>
 
-      {/* 底部导航栏 */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30">
-        {/* 顶部橙色指示条 */}
-        <div className="absolute top-0 left-0 w-1/4 h-1 bg-orange-500"></div>
-        <div className="flex items-center justify-around py-2">
-          <button className="flex flex-col items-center gap-1 px-4 py-2 text-orange-500 relative">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            <span className="text-xs font-medium">予約一覧</span>
-          </button>
-          
-          <button className="flex flex-col items-center gap-1 px-4 py-2 text-gray-500 hover:text-gray-700">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
-            </svg>
-            <span className="text-xs font-medium">ブロック</span>
-          </button>
-          
-          <button className="flex flex-col items-center gap-1 px-4 py-2 text-gray-500 hover:text-gray-700 relative">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-            </svg>
-            <span className="text-xs font-medium">通知一覧</span>
-            <div className="absolute top-1 right-2 w-2 h-2 bg-red-500 rounded-full"></div>
-          </button>
-          
-          <button className="flex flex-col items-center gap-1 px-4 py-2 text-gray-500 hover:text-gray-700 relative">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-            </svg>
-            <span className="text-xs font-medium">その他</span>
-            <div className="absolute top-1 right-2 w-2 h-2 bg-red-500 rounded-full"></div>
-          </button>
-        </div>
-      </div>
     </div>
   );
 }
