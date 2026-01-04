@@ -161,23 +161,24 @@ export default function ReservationsTableView() {
     const formData = new FormData(e.currentTarget);
     
     const tableId = parseInt(formData.get("tableId") as string);
+    const date = formData.get("date") as string;
     const time = formData.get("time") as string;
     const customerName = formData.get("customerName") as string;
     const customerPhone = formData.get("customerPhone") as string;
-    const customerEmail = formData.get("customerEmail") as string;
     const partySize = parseInt(formData.get("partySize") as string);
     const duration = parseInt(formData.get("duration") as string);
     const status = formData.get("status") as string;
     const notes = formData.get("notes") as string;
 
-    const reservationTime = new Date(`${format(selectedDate, "yyyy-MM-dd")}T${time}:00`);
+    // 如果没有填写日期，使用当前选中的日期
+    const reservationDate = date || format(selectedDate, "yyyy-MM-dd");
+    const reservationTime = new Date(`${reservationDate}T${time}:00`);
 
     updateMutation.mutate({
       id: editingReservation.id,
       tableId,
       customerName,
-      customerPhone,
-      customerEmail: customerEmail || undefined,
+      customerPhone: customerPhone || undefined,
       partySize,
       reservationTime: reservationTime.toISOString(),
       duration,
@@ -411,18 +412,49 @@ export default function ReservationsTableView() {
                       ? parseISO(reservation.reservationTime) 
                       : reservation.reservationTime;
                     
+                    // 根据预约状态显示不同颜色
+                    const getStatusColor = (status: string) => {
+                      if (status === 'completed') {
+                        // 已到店：绿色
+                        return {
+                          bg: 'bg-gradient-to-r from-green-400 to-green-300',
+                          shadow: '0 2px 8px rgba(34,197,94,0.2)',
+                        };
+                      } else if (status === 'cancelled') {
+                        // 已取消：灰色
+                        return {
+                          bg: 'bg-gradient-to-r from-gray-400 to-gray-300',
+                          shadow: '0 2px 8px rgba(156,163,175,0.2)',
+                        };
+                      } else if (status === 'no_show') {
+                        // 未到店/爽约：红色
+                        return {
+                          bg: 'bg-gradient-to-r from-red-400 to-red-300',
+                          shadow: '0 2px 8px rgba(239,68,68,0.2)',
+                        };
+                      } else {
+                        // 未到店（pending, confirmed）：橙色
+                        return {
+                          bg: 'bg-gradient-to-r from-orange-400 to-orange-300',
+                          shadow: '0 2px 8px rgba(255,152,0,0.2)',
+                        };
+                      }
+                    };
+                    
+                    const statusColor = getStatusColor(reservation.status);
+                    
                     return (
                       <Tooltip key={reservation.id}>
                         <TooltipTrigger asChild>
                           <div
-                            className="absolute bg-gradient-to-r from-orange-400 to-orange-300 rounded-xl p-3 cursor-pointer hover:shadow-lg transition-all"
+                            className={`absolute ${statusColor.bg} rounded-xl p-3 cursor-pointer hover:shadow-lg transition-all`}
                             style={{
                               left: `calc(100px + ${slotIndex * (100 / timeSlots.length)}%)`,
                               width: `calc(${slotsSpanned * (100 / timeSlots.length)}% - 8px)`,
                               top: "8px",
                               height: "calc(100% - 16px)",
                               zIndex: 1,
-                              boxShadow: "0 2px 8px rgba(255,152,0,0.2)",
+                              boxShadow: statusColor.shadow,
                             }}
                             onClick={(e) => {
                               e.stopPropagation();
@@ -649,6 +681,22 @@ export default function ReservationsTableView() {
                 </div>
 
                 <div>
+                  <Label htmlFor="edit-date">预约日期</Label>
+                  <Input
+                    id="edit-date"
+                    name="date"
+                    type="date"
+                    defaultValue={format(
+                      typeof editingReservation.reservationTime === 'string' 
+                        ? parseISO(editingReservation.reservationTime) 
+                        : new Date(editingReservation.reservationTime), 
+                      "yyyy-MM-dd"
+                    )}
+                    className="border-2 border-black rounded-none"
+                  />
+                </div>
+
+                <div>
                   <Label htmlFor="edit-time">预约时间</Label>
                   <Select
                     name="time"
@@ -685,24 +733,12 @@ export default function ReservationsTableView() {
                 </div>
 
                 <div>
-                  <Label htmlFor="edit-customerPhone">客户电话</Label>
+                  <Label htmlFor="edit-customerPhone">客户电话（可选）</Label>
                   <Input
                     id="edit-customerPhone"
                     name="customerPhone"
                     type="tel"
-                    defaultValue={editingReservation.customerPhone}
-                    required
-                    className="border-2 border-black rounded-none"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="edit-customerEmail">客户邮箱</Label>
-                  <Input
-                    id="edit-customerEmail"
-                    name="customerEmail"
-                    type="email"
-                    defaultValue={editingReservation.customerEmail || ""}
+                    defaultValue={editingReservation.customerPhone || ""}
                     className="border-2 border-black rounded-none"
                   />
                 </div>
@@ -736,18 +772,45 @@ export default function ReservationsTableView() {
 
                 <div>
                   <Label htmlFor="edit-status">预约状态</Label>
-                  <Select name="status" defaultValue={editingReservation.status} required>
-                    <SelectTrigger className="border-2 border-black rounded-none">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="pending">待确认</SelectItem>
-                      <SelectItem value="confirmed">已确认</SelectItem>
-                      <SelectItem value="cancelled">已取消</SelectItem>
-                      <SelectItem value="completed">已完成</SelectItem>
-                      <SelectItem value="no_show">未到店</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant={['pending', 'confirmed'].includes(editingReservation.status) ? 'default' : 'outline'}
+                      className={`flex-1 border-2 border-black rounded-none ${
+                        ['pending', 'confirmed'].includes(editingReservation.status)
+                          ? 'bg-gradient-to-r from-orange-400 to-orange-300 hover:from-orange-500 hover:to-orange-400 text-gray-800'
+                          : ''
+                      }`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        const form = e.currentTarget.closest('form');
+                        const statusInput = form?.querySelector('input[name="status"]') as HTMLInputElement;
+                        if (statusInput) statusInput.value = 'confirmed';
+                        setEditingReservation({ ...editingReservation, status: 'confirmed' });
+                      }}
+                    >
+                      预约未到店
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={editingReservation.status === 'completed' ? 'default' : 'outline'}
+                      className={`flex-1 border-2 border-black rounded-none ${
+                        editingReservation.status === 'completed'
+                          ? 'bg-gradient-to-r from-green-400 to-green-300 hover:from-green-500 hover:to-green-400 text-gray-800'
+                          : ''
+                      }`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        const form = e.currentTarget.closest('form');
+                        const statusInput = form?.querySelector('input[name="status"]') as HTMLInputElement;
+                        if (statusInput) statusInput.value = 'completed';
+                        setEditingReservation({ ...editingReservation, status: 'completed' });
+                      }}
+                    >
+                      预约已到店
+                    </Button>
+                  </div>
+                  <input type="hidden" name="status" value={editingReservation.status} />
                 </div>
               </div>
 

@@ -61,7 +61,7 @@ export const reservations = mysqlTable("reservations", {
   /** 客户姓名 */
   customerName: varchar("customerName", { length: 100 }).notNull(),
   /** 客户电话 */
-  customerPhone: varchar("customerPhone", { length: 50 }).notNull(),
+  customerPhone: varchar("customerPhone", { length: 50 }),
   /** 客户邮箱 */
   customerEmail: varchar("customerEmail", { length: 100 }),
   /** 预约人数 */
