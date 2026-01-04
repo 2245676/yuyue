@@ -169,12 +169,15 @@ export default function Reservations() {
     const hour = time.getHours();
     const minute = time.getMinutes();
     
+    // 动态计算slotHeight（与渲染逻辑保持一致）
+    const slotHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? 48 : 64;
+    
     // 计算距离9:00的偏移量（以小时为单位）
     const offsetHours = hour - 9 + minute / 60;
-    const top = offsetHours * 80; // 每小时80px
+    const top = offsetHours * slotHeight;
     
     // 计算高度
-    const height = (duration / 60) * 80;
+    const height = (duration / 60) * slotHeight;
     
     return { top, height };
   };
@@ -297,14 +300,14 @@ export default function Reservations() {
         <div className="overflow-x-auto">
           {/* Table Headers */}
           <div className="flex border-b-2 border-border bg-background">
-            <div className="w-16 md:w-20 flex-shrink-0 border-r-2 border-border p-1 md:p-2">
+            <div className="w-12 md:w-16 flex-shrink-0 border-r-2 border-border p-1">
               <div className="text-xs font-black text-center">时间</div>
             </div>
             <div className="flex-1 flex">
               {tables?.map((table) => (
                 <div
                   key={table.id}
-                  className="flex-1 min-w-[100px] md:min-w-[120px] border-r-2 border-border p-1 md:p-2 bg-muted">
+                  className="flex-1 min-w-[70px] md:min-w-[90px] border-r-2 border-border p-1 bg-muted">
                   <div className="text-xs md:text-sm font-black text-center">{table.tableNumber}</div>
                   <div className="text-xs text-muted-foreground text-center font-mono">
                     {table.capacity}人
@@ -317,11 +320,11 @@ export default function Reservations() {
           {/* Time Slots and Reservations */}
           <div className="flex relative">
             {/* Time Column */}
-            <div className="w-16 md:w-20 flex-shrink-0 border-r-2 border-border">
+            <div className="w-12 md:w-16 flex-shrink-0 border-r-2 border-border">
               {timeSlots.map((slot) => (
                 <div
                   key={slot.hour}
-                  className="h-16 md:h-20 border-b border-border flex items-center justify-center">
+                  className="h-12 md:h-16 border-b border-border flex items-center justify-center">
                   <div className="text-xs font-mono font-bold">{slot.label}</div>
                 </div>
               ))}
@@ -330,18 +333,21 @@ export default function Reservations() {
             {/* Reservation Columns */}
             <div className="flex-1 flex relative">
               {tables?.map((table) => {
-                const slotHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? 64 : 80;
+                const slotHeight = typeof window !== 'undefined' && window.innerWidth < 768 ? 48 : 64;
                 return (
                 <div
                   key={table.id}
-                  className="flex-1 min-w-[100px] md:min-w-[120px] border-r-2 border-border relative"
+                  className="flex-1 min-w-[70px] md:min-w-[90px] border-r-2 border-border relative"
                   style={{ height: `${timeSlots.length * slotHeight}px` }}>
                   {/* Hour Lines */}
-                  {timeSlots.map((slot) => (
+                  {timeSlots.map((slot, index) => (
                     <div
                       key={slot.hour}
-                      className="absolute left-0 right-0 h-20 border-b border-border"
-                      style={{ top: `${(slot.hour - 9) * 80}px` }}
+                      className="absolute left-0 right-0 border-b border-border"
+                      style={{ 
+                        top: `${index * slotHeight}px`,
+                        height: `${slotHeight}px`
+                      }}
                     />
                   ))}
 
@@ -358,27 +364,22 @@ export default function Reservations() {
                     return (
                       <div
                         key={reservation.id}
-                        className={`absolute left-1 right-1 p-2 border-2 ${getStatusColor(
+                        className={`absolute left-0.5 right-0.5 p-1 md:p-1.5 border ${getStatusColor(
                           reservation.status
                         )} text-white rounded-sm cursor-pointer hover:opacity-80 transition-opacity overflow-hidden`}
                         style={{ top: `${top}px`, height: `${height}px` }}
                         title={`${reservation.customerName} - ${reservation.partySize}人`}
                         onClick={() => handleReservationClick(reservation)}
                       >
-                        <div className="text-xs font-bold truncate">
+                        <div className="text-[10px] md:text-xs font-bold truncate leading-tight">
                           {format(time, "HH:mm")}
                         </div>
-                        <div className="text-sm font-black truncate">
+                        <div className="text-xs md:text-sm font-black truncate leading-tight">
                           {reservation.customerName}
                         </div>
-                        <div className="text-xs font-mono truncate">
-                          {reservation.partySize}人 · {getStatusText(reservation.status)}
+                        <div className="text-[10px] md:text-xs font-mono truncate leading-tight">
+                          {reservation.partySize}人
                         </div>
-                        {reservation.notes && (
-                          <div className="text-xs truncate opacity-80 mt-1">
-                            {reservation.notes}
-                          </div>
-                        )}
                       </div>
                     );
                   })}
