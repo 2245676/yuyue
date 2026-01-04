@@ -5,8 +5,7 @@ import {
   Settings,
   Menu,
   X,
-  Utensils,
-  Package
+  Utensils
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -25,7 +24,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const navItems = [
     { href: "/", label: "予約管理", icon: CalendarDays },
     { href: "/tables", label: "テーブル管理", icon: Utensils },
-    { href: "/inventory", label: "在庫（剩余）", icon: Package },
     { href: "/settings", label: "システム設定", icon: Settings },
   ];
 
