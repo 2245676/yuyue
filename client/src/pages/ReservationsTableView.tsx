@@ -26,7 +26,8 @@ import { toast } from "sonner";
 import { format, addDays, subDays, parseISO, startOfDay, endOfDay } from "date-fns";
 import { zhCN } from "date-fns/locale";
 import { logger } from "@/lib/logger";
-import { ReservationHeader } from "@/components/ReservationHeader";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 
 export default function ReservationsTableView() {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -37,6 +38,7 @@ export default function ReservationsTableView() {
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [lastClickTime, setLastClickTime] = useState<number>(0);
   const [lastClickCell, setLastClickCell] = useState<string>("");
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
   const utils = trpc.useUtils();
   
@@ -292,12 +294,112 @@ export default function ReservationsTableView() {
   return (
     <div className="h-screen flex flex-col bg-gray-50">
       {/* 顶部导航栏 */}
-      <ReservationHeader
-        selectedDate={selectedDate}
-        onDateChange={setSelectedDate}
-        onCreateClick={() => setIsCreateDialogOpen(true)}
-        reservations={reservations || []}
-      />
+      <div className="flex-none bg-white p-4 pb-0">
+        {/* 日期横条（包含日期切换、统计信息、操作按钮） */}
+        <div className="flex items-center justify-between gap-4 mb-4">
+          {/* 左侧：圆角日期导航 */}
+          <div className="flex items-center gap-3 bg-gray-100 rounded-full px-4 py-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setSelectedDate(subDays(selectedDate, 1))}
+              className="h-8 w-8 rounded-full hover:bg-gray-200"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+            
+            <Popover open={isDatePickerOpen} onOpenChange={setIsDatePickerOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="text-base font-bold px-2 hover:bg-gray-200 rounded-full"
+                >
+                  {format(selectedDate, "M月d日", { locale: zhCN })}
+                  <span className="ml-1 text-sm font-normal text-gray-600">
+                    ({format(selectedDate, "E", { locale: zhCN })})
+                  </span>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="center">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={(date) => {
+                    if (date) {
+                      setSelectedDate(date);
+                      setIsDatePickerOpen(false);
+                    }
+                  }}
+                  locale={zhCN}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setSelectedDate(addDays(selectedDate, 1))}
+              className="h-8 w-8 rounded-full hover:bg-gray-200"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </Button>
+          </div>
+
+          {/* 中间：统计信息（紧凑版） */}
+          <div className="flex items-center gap-2 flex-1 justify-center">
+            <div className="flex items-center gap-2 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg px-3 py-1.5 border border-blue-200">
+              <span className="text-xs text-blue-600 font-medium">总预约</span>
+              <span className="text-lg font-bold text-blue-700">
+                {reservations?.filter(r => {
+                  const resDate = typeof r.reservationTime === 'string' 
+                    ? parseISO(r.reservationTime) 
+                    : r.reservationTime;
+                  return format(resDate, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd');
+                }).length || 0}
+              </span>
+            </div>
+            
+            <div className="flex items-center gap-2 bg-gradient-to-br from-green-50 to-green-100 rounded-lg px-3 py-1.5 border border-green-200">
+              <span className="text-xs text-green-600 font-medium">已到店</span>
+              <span className="text-lg font-bold text-green-700">
+                {reservations?.filter(r => {
+                  const resDate = typeof r.reservationTime === 'string' 
+                    ? parseISO(r.reservationTime) 
+                    : r.reservationTime;
+                  return format(resDate, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd') && r.status === 'completed';
+                }).length || 0}
+              </span>
+            </div>
+            
+            <div className="flex items-center gap-2 bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg px-3 py-1.5 border border-orange-200">
+              <span className="text-xs text-orange-600 font-medium">未到店</span>
+              <span className="text-lg font-bold text-orange-700">
+                {reservations?.filter(r => {
+                  const resDate = typeof r.reservationTime === 'string' 
+                    ? parseISO(r.reservationTime) 
+                    : r.reservationTime;
+                  return format(resDate, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd') && ['pending', 'confirmed'].includes(r.status);
+                }).length || 0}
+              </span>
+            </div>
+          </div>
+
+          {/* 右侧：操作按钮 */}
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={() => setIsCreateDialogOpen(true)}
+              size="icon"
+              variant="ghost"
+              className="h-10 w-10 rounded-full hover:bg-gray-100"
+            >
+              <Plus className="h-6 w-6" />
+            </Button>
+          </div>
+        </div>
+
+
+      </div>
 
       {/* 日历网格 */}
       <div className="flex-1 overflow-auto">
